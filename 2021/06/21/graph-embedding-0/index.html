@@ -79,12 +79,12 @@
 
 
 
-<meta name="description" content="——2021.6.21    图结构(Graph)广泛存在于现实各种应用场景中。如在社交媒体中，用户之间的关注关系构成一个大的社交网络；又如推荐系统中，用户对商品的关注、评分等行为把可以抽象成用户和商品的交互图。然而，现实中的图结构大多都很复杂，如一个社交媒体中可能有几十亿用户、几千万条边；同时，图中的连接关系可能包含复杂的信息，如一个用户对商品的反馈可能是正面的，也可能是负面的。因此，如何有">
+<meta name="description" content="——2021.6.21    图结构(Graph)广泛存在于现实各种应用场景。如在社交媒体中，用户之间的关注关系构成一个大的社交网络；又如推荐系统中，用户对商品的关注、评分等行为把可以抽象成用户和商品的交互图。然而，现实中的图结构大多都很复杂，如一个社交媒体中可能有几十亿用户、几千万条边；同时，图中的连接关系可能包含复杂的信息，如一个用户对商品的反馈可能是正面的，也可能是负面的。因此，如何有效">
 <meta property="og:type" content="article">
 <meta property="og:title" content="graph_embedding">
 <meta property="og:url" content="http://yoursite.com/2021/06/21/graph-embedding-0/index.html">
 <meta property="og:site_name" content="Air can sing">
-<meta property="og:description" content="——2021.6.21    图结构(Graph)广泛存在于现实各种应用场景中。如在社交媒体中，用户之间的关注关系构成一个大的社交网络；又如推荐系统中，用户对商品的关注、评分等行为把可以抽象成用户和商品的交互图。然而，现实中的图结构大多都很复杂，如一个社交媒体中可能有几十亿用户、几千万条边；同时，图中的连接关系可能包含复杂的信息，如一个用户对商品的反馈可能是正面的，也可能是负面的。因此，如何有">
+<meta property="og:description" content="——2021.6.21    图结构(Graph)广泛存在于现实各种应用场景。如在社交媒体中，用户之间的关注关系构成一个大的社交网络；又如推荐系统中，用户对商品的关注、评分等行为把可以抽象成用户和商品的交互图。然而，现实中的图结构大多都很复杂，如一个社交媒体中可能有几十亿用户、几千万条边；同时，图中的连接关系可能包含复杂的信息，如一个用户对商品的反馈可能是正面的，也可能是负面的。因此，如何有效">
 <meta property="og:locale">
 <meta property="og:image" content="http://yoursite.com/2021/06/21/graph-embedding-0/graph_emb.png">
 <meta property="og:image" content="http://yoursite.com/2021/06/21/graph-embedding-0/mf.png">
@@ -100,7 +100,7 @@
 <meta property="og:image" content="http://yoursite.com/2021/06/21/graph-embedding-0/hete_skip_gram.png">
 <meta property="og:image" content="http://yoursite.com/2021/06/21/graph-embedding-0/hin2vec.png">
 <meta property="article:published_time" content="2021-06-21T03:40:01.000Z">
-<meta property="article:modified_time" content="2021-06-22T11:57:28.217Z">
+<meta property="article:modified_time" content="2021-06-22T12:33:55.690Z">
 <meta property="article:author" content="风鸣北川_rigel">
 <meta property="article:tag" content="coding">
 <meta property="article:tag" content="DL">
@@ -372,7 +372,7 @@
 <font color="grey"> <i>——2021.6.21</i> </font>
 </p>
 <hr>
-<p>图结构(Graph)广泛存在于现实各种应用场景中。如在社交媒体中，用户之间的关注关系构成一个大的社交网络；又如推荐系统中，用户对商品的关注、评分等行为把可以抽象成用户和商品的交互图。然而，现实中的图结构大多都很复杂，如一个社交媒体中可能有几十亿用户、几千万条边；同时，图中的连接关系可能包含复杂的信息，如一个用户对商品的反馈可能是正面的，也可能是负面的。因此，如何有效地对图结构进行建模是学术界和工业界持续关注的焦点。</p>
+<p>图结构(Graph)广泛存在于现实各种应用场景。如在社交媒体中，用户之间的关注关系构成一个大的社交网络；又如推荐系统中，用户对商品的关注、评分等行为把可以抽象成用户和商品的交互图。然而，现实中的图结构大多都很复杂，如一个社交媒体中可能有几十亿用户、几千万条边；同时，图中的连接关系可能包含复杂的信息，如一个用户对商品的反馈可能是正面的，也可能是负面的。因此，如何有效地对图结构进行建模是学术界和工业界持续关注的焦点。</p>
 <p>图嵌入(Graph Embedding)为此提供了很好的解决问题的方法。嵌入(Embedding)的思想是：我们希望可以把节点的特征信息嵌入到一个低维空间中，使得有邻接节点在低维空间中的特征向量彼此靠近，以此达到降维和图表示学习的目的。如果我们以数学语言描述图嵌入问题：</p>
 <p>给定图<span class="math inline">\(G=(V, E)\)</span>，其中<span class="math inline">\(V\)</span>代表节点(<strong>Vertex</strong>)集合，<span class="math inline">\(E\)</span>代表图中边(<strong>Edge</strong>)集合。定义变量<span class="math inline">\(Type_v\)</span>，<span class="math inline">\(Type_e\)</span>，分别代表图中节点类型集合和边类型集合。对于图<span class="math inline">\(G\)</span>，当 <span class="math inline">\(|Type_v| + |Type_e| = 2\)</span>时，我们称<span class="math inline">\(G\)</span>为同构图(Homogenous Network)，即节点类型和边类型只有一种的图，比如社交网络；对于图<span class="math inline">\(G\)</span>，当 <span class="math inline">\(|Type_v| + |Type_e| \geq 3\)</span> 时，我们称<span class="math inline">\(G\)</span>为异构图(Heterogenous Network)，即节点类型边类型不止有一种的图，比如用户和商品的关系图。</p>
 <p>对于图中节点<span class="math inline">\(u \in V\)</span> ，定义节点<span class="math inline">\(u\)</span>的<strong>邻域</strong>(<strong>neighborhood</strong>)为<span class="math inline">\(N_u\)</span>，我们希望找到一种方法<span class="math inline">\(f:u\rightarrow R^{d \times |V|}\)</span>，将节点特征映射到一个低维度的向量空间中，空间中的向量 <span class="math inline">\(e_u \in R^{d \times |V|}\)</span> 能够很好地聚合<span class="math inline">\(u\)</span>的邻域信息，使得 <span class="math inline">\(v \in N_u\)</span>的向量 <span class="math inline">\(e_v \in R^{d \times |V|}\)</span> 在嵌入空间中与<span class="math inline">\(e_u\)</span>尽可能接近。如下图所示，我们把 <span class="math inline">\(R^{d \times |V|}\)</span> 称为嵌入空间(Embedding Space)，<span class="math inline">\(f\)</span>就是我们希望找到的嵌入方法。</p>
