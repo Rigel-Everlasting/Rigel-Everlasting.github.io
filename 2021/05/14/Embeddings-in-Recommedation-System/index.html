@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="coding,DL,graph_embedding," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="——2021.5.14    This is the draft version, with more detailedly explanation. 本文主要介绍了xxx 本文目录如下： ## Matrix Factorization SVD 基于矩阵分解的嵌入方法最初来自于伪奇异值分解。以user-item-rating这一矩阵为例，奇异值分解将大矩阵\(R:m \times n\) 分解">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Embeddings in Recommendation System">
+<meta property="og:url" content="http://yoursite.com/2021/05/14/Embeddings-in-Recommedation-System/index.html">
+<meta property="og:site_name" content="Air can sing">
+<meta property="og:description" content="——2021.5.14    This is the draft version, with more detailedly explanation. 本文主要介绍了xxx 本文目录如下： ## Matrix Factorization SVD 基于矩阵分解的嵌入方法最初来自于伪奇异值分解。以user-item-rating这一矩阵为例，奇异值分解将大矩阵\(R:m \times n\) 分解">
+<meta property="og:locale">
+<meta property="og:image" content="http://yoursite.com/2021/05/14/Embeddings-in-Recommedation-System/airbnb_objfunc.png">
+<meta property="og:image" content="http://yoursite.com/2021/05/14/Embeddings-in-Recommedation-System/list_type_table.jpeg">
+<meta property="og:image" content="http://yoursite.com/2021/05/14/Embeddings-in-Recommedation-System/long_term_train.png">
+<meta property="og:image" content="http://yoursite.com/2021/05/14/Embeddings-in-Recommedation-System/eges_frm.png">
+<meta property="og:image" content="http://yoursite.com/2021/05/14/Embeddings-in-Recommedation-System/side_info.png">
+<meta property="og:image" content="http://yoursite.com/2021/05/14/Embeddings-in-Recommedation-System/hete_skip_gram.png">
+<meta property="og:image" content="http://yoursite.com/2021/05/14/Embeddings-in-Recommedation-System/hin2vec.png">
+<meta property="article:published_time" content="2021-05-14T07:40:26.000Z">
+<meta property="article:modified_time" content="2021-06-16T10:34:07.557Z">
+<meta property="article:author" content="风鸣北川_rigel">
+<meta property="article:tag" content="coding">
+<meta property="article:tag" content="DL">
+<meta property="article:tag" content="graph_embedding">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2021/05/14/Embeddings-in-Recommedation-System/airbnb_objfunc.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2021/05/14/Embeddings-in-Recommedation-System/"/>
+
+
+
+
+
+  <title>Embeddings in Recommendation System | Air can sing</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Air can sing</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/05/14/Embeddings-in-Recommedation-System/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/lukeandartoo.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Air can sing">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Embeddings in Recommendation System</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-05-14T15:40:26+08:00">
+                2021-05-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/paper-reviews/" itemprop="url" rel="index">
+                    <span itemprop="name">paper_reviews</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p align="right">
+<font color="grey"> <i>——2021.5.14</i> </font>
+</p>
+<hr>
+<p>This is the draft version, with more detailedly explanation.</p>
+<p>本文主要介绍了xxx</p>
+<p>本文目录如下： ## Matrix Factorization</p>
+<h3 id="svd">SVD</h3>
+<p>基于矩阵分解的嵌入方法最初来自于伪奇异值分解。以user-item-rating这一矩阵为例，奇异值分解将大矩阵<span class="math inline">\(R:m \times n\)</span> 分解为两个小矩阵<span class="math inline">\(U:m \times k\)</span>，<span class="math inline">\(I:k \times n\)</span> 的乘积：</p>
+<p><span class="math display">\[R = U\times I\]</span></p>
+<p>这其中的k维向量，代表隐因子（Latent Factor）向量。矩阵分解认为，隐因子一定程度上代表了user和item的某种属性。</p>
+<p>这样做的理论依据，源自线性代数中的特征值分解。对于<span class="math inline">\(n\)</span>阶方阵<span class="math inline">\(A\)</span>，存在常数 <span class="math inline">\(\lambda\)</span>，非零列向量 <span class="math inline">\(\alpha\)</span>：</p>
+<p><span class="math display">\[A\alpha = \lambda\alpha\]</span></p>
+<p>其中，<span class="math inline">\(\lambda\)</span>为方阵A的特征值，<span class="math inline">\(\alpha\)</span>为特征向量。矩阵与另一个矩阵的乘积实际上代表了一次<strong>线性变换</strong>，即将原本的矩阵映射到了另外的一个向量空间。但在上面的式子中，A乘以 <span class="math inline">\(\alpha\)</span>的结果和乘以常数 <span class="math inline">\(\lambda\)</span>是一样的。说明对于矩阵A而言存在着一些不变的值，即特征向量 <span class="math inline">\(\alpha\)</span>。</p>
+<p>特征分解仅限于方阵，对于一般的矩阵上有相似的性质，即<strong>奇异值分解</strong> <strong>SVD（Singular Vector Decomposition）</strong>。任何矩阵，都可以通过SVD的方式分解成几个矩阵相乘的形式：</p>
+<p><span class="math display">\[R = U\times S\times V\]</span></p>
+<p>其中，<span class="math inline">\(U\)</span>是一个<span class="math inline">\(m\times m\)</span>正交矩阵，<span class="math inline">\(S\)</span>是特征值矩阵，<span class="math inline">\(V\)</span>是一个<span class="math inline">\(n\times n\)</span>正交矩阵。如果我们只取前k个大的特征值，并将其中两个矩阵合并只留两个矩阵，就会得到我们一开始的形式：</p>
+<p><span class="math display">\[R = U\times I\]</span></p>
+<p>在user-item-rating这一特定的矩阵中，这两个子矩阵可以分别代表user的偏好程度和item的成分属性。将两个矩阵相乘，即可得到评分矩阵。</p>
+<p>在实际应用的过程中，对于user-item-rating矩阵而言，评分的预测实际上是一个补全矩阵的过程。原本的矩阵中，有一部分有评分，而有一部分没有。因此，矩阵分解的目标是使得最终得到的两个小矩阵的乘积可以很好地补全大矩阵中没有评分的未知项，如何获得这两个最优的小矩阵即如何学习到满意的可以代表user、item属性的嵌入向量矩阵。我们使有评分的部分与预测得到的评分误差最小即可，具体的目标函数取决于这一误差损失的定义，常用的为MSE。</p>
+<p>这是最简单的SVD，它还有很多变种，包括biasSVD，SVD++等等。</p>
+<!-- ### BPR -->
+<h3 id="factorization-machine">Factorization Machine</h3>
+<p><strong>分解机FM（Factorization Machine）</strong>的理论基础源自广义线性模型和矩阵分解。它的目标是解决数据稀疏情况下如何对高阶特征进行组合的问题（estimate interactions within features even with huge sparsity）。下文以二阶为例。</p>
+<p>在普通的线性模型中，一般对每个特征<span class="math inline">\(x_i\)</span>进行一阶的线性组合来得到预测结果 <span class="math inline">\(\hat{y}\)</span>：</p>
+<p><span class="math display">\[\hat{y(x)}=w_0+\sum_{i=1}^nw_ix_i\]</span></p>
+<p>然而，这样简单的一阶组合会损失掉不同特征之间的关联信息。因此，可以引入二阶关联特征：</p>
+<p><span class="math display">\[\hat{y(x)}=w_0+\sum_{i=1}^nw_ix_i+\sum_{i=1}^n\sum_{j=i+1}^nw_{i,j}x_ix_j\]</span></p>
+<p>引入一个对称矩阵<span class="math inline">\(W\)</span>，其中<span class="math inline">\(w_{i, j}\)</span> 代表了特征<span class="math inline">\(x_i\)</span>和<span class="math inline">\(x_j\)</span>之间的关联权重。然而，这样的组合面临一个很大的问题。因为只有当<span class="math inline">\(x_i\)</span>和<span class="math inline">\(x_j\)</span>都不为0时，<span class="math inline">\(w_{i, j}\)</span> 的取值才有意义，否则无法对这个参数进行估计。这在样本过于稀疏时是无法保证的，会导致特征关联权重矩阵<span class="math inline">\(W\)</span>得不到充分的训练。</p>
+<p>FM正是为了解决这一问题。FM使用了矩阵分解的思想，将<span class="math inline">\(W\)</span>分解为<span class="math inline">\(W=V^TV\)</span>。对于<span class="math inline">\(W\)</span>中的每个参数，有：</p>
+<p><span class="math display">\[w_{i,j}=&lt;v_i, v_j&gt;\]</span></p>
+<p>其中，<span class="math inline">\(v_i\)</span>是第<span class="math inline">\(i\)</span>个特征的<span class="math inline">\(k\)</span>维隐向量，包含<span class="math inline">\(k\)</span>个隐因子。<span class="math inline">\(&lt;·,·&gt;\)</span>表示两个<span class="math inline">\(k\)</span>维向量的点积：</p>
+<p><span class="math display">\[&lt;v_i, v_j&gt;=\sum_{f=1}^kv_{i,f}v_{j,f}\]</span></p>
+<p>最终的公式为：</p>
+<p><span class="math display">\[\hat{y(x)}=w_0+\sum_{i=1}^nw_ix_i+\sum_{i=1}^n\sum_{j=i+1}^n\sum_{f=1}^kv_{i,f}v_{j,f}x_ix_j\]</span></p>
+<p>因此，对于这个模型而言，不再直接求解特征组合权重参数<span class="math inline">\(w_{i, j}\)</span> ，而是采用隐向量的点积，对每一个特征分量<span class="math inline">\(x_i\)</span>引入隐向量<span class="math inline">\(v_i=(v_{i,1}, ..., v_{i,k})\)</span>，利用<span class="math inline">\(v_iv_j^T\)</span>对<span class="math inline">\(w_i,j\)</span>进行估计：</p>
+<p><span class="math display">\[\hat w_{i,j}=v_iv_j^T\]</span></p>
+<p>对于<span class="math inline">\(x_kx_i\)</span>和<span class="math inline">\(x_ix_j\)</span>的系数&lt;<span class="math inline">\(v_k\)</span>, <span class="math inline">\(v_i\)</span>&gt;和&lt;<span class="math inline">\(v_i\)</span>, <span class="math inline">\(v_j\)</span>&gt;来说，它们之间都有<span class="math inline">\(v_i\)</span>，只要包含<span class="math inline">\(v_i\)</span>就可以对<span class="math inline">\(v_i\)</span>进行训练，即使<span class="math inline">\(x_kx_i\)</span>之间不存在带有关联信息的样本，所有包含<span class="math inline">\(x_i\)</span>的非零组合特征（存在某个<span class="math inline">\(j \neq i\)</span>使得<span class="math inline">\(x_ix_j \neq 0\)</span>）的样本都可以用来学习隐向量<span class="math inline">\(v_i\)</span>，这在很大程度上缓解了数据稀疏所带来的参数学习不充分的问题。</p>
+<!-- 以实际情况举个例子。 -->
+<h2 id="embeddings">embeddings</h2>
+<p>另外一类对图中信息进行表示学习的受NLP中的词向量模型启发。我们知道，NLP中词向量模型的目标是希望能够找到这样的一个低维度的向量空间，可以很好地表示语库中每个词语的特征，使得通过这些低维度的向量即可以计算出词之间的语义相似性。这个特征空间就是词向量组成的特征空间。</p>
+<p>对于自然语言来说，出现在同一个句子中的词，彼此之间由于上下文的语义关系，具有一定的关联特征。<strong>a graph!!!</strong> 这种句子之间的上下文信息对于好的词向量生成至关重要。word2vec正是基于这一点。在把这一思路运用到graph embedding之前，我们先介绍一下word2vec的原理。</p>
+<h3 id="理论基础word2vec">理论基础：word2vec</h3>
+<p>原始的word2vec模型中提供了两种方法，分别是以中心词向量生成背景词向量概率分布的skip-gram，和以背景词向量生成中心词向量概率分布的c-bow。 #### skip-gram 以skip-gram为例，词库大小为<span class="math inline">\(T\)</span>，<span class="math inline">\(w_c\)</span>为中心词，<span class="math inline">\(w_o\)</span>为背景词。以<span class="math inline">\(P(w_o|w_c)\)</span> 代表背景词<span class="math inline">\(w_o\)</span>的概率分布，<span class="math inline">\(u\)</span>代表背景词向量，<span class="math inline">\(v\)</span>代表中心词向量，定义如下：</p>
+<p><span class="math display">\[P(w_o|w_c) = \frac{exp(u_o^Tv_c)}{\sum_{i\in T}exp(u_i^Tv_c)}\]</span></p>
+<p>根据最大似然估计的思想，我们的目标是最大化当前中心词的所有背景词向量的联合概率分布，即：</p>
+<p><span class="math display">\[argmax  \frac{1}{T}\prod_{t=1}^T \prod_{-m\leq j\leq m}log P(w^{t+j}_o|w^t_c)\]</span></p>
+<p>其中，m为背景词窗口大小。</p>
+<p>取负并取对数，得到损失函数：</p>
+<p><span class="math display">\[L=  -\frac{1}{T}\sum_{t=1}^T \sum_{-m\leq j\leq m}log P(w^{t+j}_o|w^t_c)\]</span></p>
+<p>采用随机梯度下降的方式进行参数优化： <span class="math display">\[
+\begin{matrix}
+v_c = v_c - \frac{\partial L} {\partial v_c} \\
+\frac{\partial L} {\partial v_c} = u_o-\sum_{j \in T}P(w_o^j|w_c)u_j
+\end{matrix}
+\]</span></p>
+<p>在求解背景词的概率分布时使用了softmax，可以看到，由于背景词可能是词典中的任意一个词，因此导致我们要对整个词典大小的词进行遍历，这样的计算代价显然是不现实的。word2vec中提出了两种优化训练的方法，分别是<strong>负采样</strong>（<strong>negative sampling</strong>）和层序softmax。</p>
+<h4 id="负采样">负采样</h4>
+<p>负采样首先基于两个假设：</p>
+<blockquote>
+<ul>
+<li>中心词<span class="math inline">\(w_c\)</span>和背景词<span class="math inline">\(w_o\)</span>同时出现在一个训练窗口。</li>
+<li>中心词<span class="math inline">\(w_c\)</span>和第k个噪声词<span class="math inline">\(w_k\)</span>不同时出现在一个训练窗口。</li>
+</ul>
+</blockquote>
+<p>以skip-gram为例，中心词和背景词同时出现在当前训练窗口的概率为：</p>
+<p><span class="math display">\[
+P(D=1|w_c, w_o) = \sigma (u_o^T \cdot v_c)
+\]</span></p>
+<p>同理，中心词和噪声词没有同时出现在当前训练窗口的概率为：</p>
+<p><span class="math display">\[
+P(D=0|w_c, w_k) = 1 - \sigma (u_k^T \cdot v_c)
+\]</span></p>
+<p>因此，根据MLE的思想，最大化联合概率分布：</p>
+<p><span class="math display">\[
+P(w_o|w_c) = P(D=1|w_c, w_o) \prod_{k=1}^K P(D=0|w_c, w_k)
+\]</span></p>
+<p>取对数再取负，把上述概率计算公式代入，激活函数为sigmoid，优化后的损失函数变为： <span class="math display">\[
+L = -log \frac {1} {1+e^{-u_o^T \cdot v_c}} - \sum_{k=1, w_k~P(w)}^K log \frac {1} {1+e^{u_k^T \cdot v_c}}
+\]</span></p>
+<p>由此可知，如果我们想将这一套训练方法应用到其他的场景中，那么需要明确的有两点：</p>
+<blockquote>
+<ul>
+<li>如何构造有意义的sequence。在词向量的训练模型中，sequence指的是语料库中的所有句子。这些句子提供了词语之间的上下文关系，是学习语义相似性的基础。</li>
+<li>如何结合具体应用场景对训练过程采用负采样或层序sofrmax优化。</li>
+</ul>
+</blockquote>
+<p>接下来将词向量的训练原理类比到graph embedding中。给定图<span class="math inline">\(G=(V, E)\)</span>，其中<span class="math inline">\(V\)</span>代表节点集合，<span class="math inline">\(E\)</span>代表图中边集合。定义变量<span class="math inline">\(Type_v\)</span>，<span class="math inline">\(Type_e\)</span>，分别代表图中节点类型集合和边类型集合。</p>
+<p>对于图中节点<span class="math inline">\(u \in V\)</span> ，我们希望找到一种方法<span class="math inline">\(f:u\rightarrow R^d\)</span>，以<span class="math inline">\(R^d\)</span>中的向量<span class="math inline">\(e_u\)</span>来代表节点<span class="math inline">\(u\)</span>的特征。我们希望可以充分利用图中的连接关系（类比于句子中词语之间的上下文关系），来学习到每个节点特征的低维度表示。</p>
+<p>在这一理论基础下，我们接下来看几大经典的基于word2vec的graph embedding算法。首先是对同构图(Homogenous Network)信息进行嵌入的<strong>deepWalk</strong>和<strong>node2vec</strong>。两者都采用<strong>随机游走</strong>（<strong>Random Walk</strong>）的方法生成节点序列，即可以认为：</p>
+<blockquote>
+<ul>
+<li>两个同时出现在一个随机游走序列中的节点之间存在一定的相似性。这种相似性就对应词嵌入模型中的上下文信息。</li>
+</ul>
+</blockquote>
+<!-- ## 同构图嵌入 -->
+<h3 id="deepwalk">deepWalk</h3>
+<p>给定无向无权图<span class="math inline">\(G=(V, E)\)</span>，<span class="math inline">\(V\)</span>是xxx，例如在xx中，<span class="math inline">\(V\)</span>可能是xx，deepWalk首先给定游走策略<span class="math inline">\(R\)</span>，以节点<span class="math inline">\(u\)</span>为起始点进行随机游走，生成的所有序列中包含的所有节点组成了节点<span class="math inline">\(u\)</span>的<strong>邻域</strong>(<strong>neighborhood</strong>)<span class="math inline">\(N_{R(u)}\)</span>。对应word2vec的skip-gram算法，<span class="math inline">\(N_{R(u)}\)</span> 中的节点<span class="math inline">\(v\)</span>即为背景词，<span class="math inline">\(u\)</span>即为中心词。因此，deepWalk的损失函数可以定义为：</p>
+<p><span class="math display">\[
+\begin{matrix}
+L = \sum_{u \in V}\sum_{v \in N_{R(u)}} -log(P(e_v|e_u))\\
+P(e_v|e_u) = \frac {exp(e_u^T \cdot e_v)} {\sum_{j\in V}(e_u^T \cdot e_j)}
+\end{matrix}
+\]</span></p>
+<p>其中，<span class="math inline">\(e_u\)</span>代表节点<span class="math inline">\(u\)</span>的embedding。由于<span class="math inline">\(P(e_v|e_u)\)</span> 的计算是不现实的，因此deepWalk采用Hierarchical Softmax对训练过程进行优化。deepWalk用所有节点构建了一棵树，每个节点是这棵树的叶子节点，因此到每个节点都有一条唯一的路径。层序softmax把计算<span class="math inline">\(P(e_v|e_u)\)</span> 的问题转化成最大化层序遍历的过程中最大化某一条路径的方式(maximize the probability of a specific path in the hierarchy)。如果到节点<span class="math inline">\(u_k\)</span>的路径为( <span class="math inline">\(b_0\)</span>, <span class="math inline">\(b_1\)</span>, ..., <span class="math inline">\(b_{log|V|}\)</span>) (<span class="math inline">\(b_0 = root\)</span>, <span class="math inline">\(b_{log|V|} = u_k\)</span>)，那么</p>
+<p><span class="math display">\[
+\begin{matrix}
+P(e_v|e_u) = \prod_{l=1}^{log|V|}P(b_l|e_u)\\
+P(b_l|e_u) = \frac {1} {1+e^{-e_u \cdot {e_{b_l}}}}
+\end{matrix}
+\]</span></p>
+<!-- $$
+\begin{matrix}
+P(u_k|\phi(v_j)) = \prod_{l=1}^{log|V|}P(b_l|\phi (v_j))\\
+P(b_l|\phi (v_j)) = \frac {1} {1+e^{-\phi (v_j) \cdot {}}}
+\end{matrix}
+$$ -->
+<p>其中，<span class="math inline">\(e_{b_l}\)</span> 代表了树中节点<span class="math inline">\(b_l\)</span>的父节点向量。由于树的结构性质，层序softmax把原本<span class="math inline">\(O(|V|)\)</span> 的计算代价建为了<span class="math inline">\(O(log|V|)\)</span>。</p>
+<!-- 同样的，计算代价是过高的$O||V^2||$， -->
+<!-- 因此deepWalk采用negative sampling进行优化。
+
+$$L = log(\sigma (e_u^T \cdot e_v))-\sum_{i=1}^klog(\sigma (e_u^T \cdot e_i))$$ -->
+<p>P.S. 理论上deepWalk适用于边无权重的图，但在实际应用的过程中，可以把边的权重和随机游走的转移概率结合在一起，所以也比较灵活。这也是在deepWalk的基础上产出的诸多衍生模型的做法。</p>
+<h3 id="node2vec">node2vec</h3>
+<p>node2vec对deepWalk的随机游走序列生成过程进行了改进。deepWalk中选择游走的下一个节点的方式是均匀的，而这样生成的序列可能无法捕捉到相隔较远的两个节点之间的相似性，因为它们很难出现在同一个随机游走序列中。</p>
+<p>node2vec采用了更加灵活的随机游走策略来生成邻域<span class="math inline">\(N_{R(u)}\)</span>，使得捕捉到的相似性信息可以在<strong>局部信息</strong>和<strong>全局信息</strong>之间进行一个权衡。我们知道，对图的遍历有两种策略，分别是<strong>BFS</strong>（深度优先搜索）和<strong>DFS</strong>（广度优先搜索）。这两种策略恰恰对应了两种不同的定义节点邻域的方式：</p>
+<ul>
+<li><p>BFS: 局部信息(local microscopic view)</p></li>
+<li><p>DFS: 全局信息(global macroscopic view)</p></li>
+</ul>
+<p>因此，node2vec给定两个超参数用以指导随机游走：</p>
+<ul>
+<li><p>return parameter \<span class="math inline">\(p\)</span>: 控制返回到上一个节点</p></li>
+<li><p>in-out parameter \<span class="math inline">\(q\)</span>: 控制是否远离当前节点（DFS）或靠近当前节点（BFS）</p></li>
+</ul>
+<p>这两个超参数控制随机游走的转移概率。<span class="math inline">\(1/p\)</span>控制着返回上一个节点的概率。<span class="math inline">\(p\)</span>越小，随机游走生成的序列越接近于BFS遍历，序列所捕获的邻域信息越接倾向于局部信息；<span class="math inline">\(1/q\)</span>控制着更远一步的概率。<span class="math inline">\(q\)</span>越小，随机游走生成的序列越接近于DFS遍历，序列所捕获的邻域信息越接倾向于全局信息。前者更适用于捕捉community之间的相似性，后者更适合于捕捉图中的层次化/结构化信息:</p>
+<!-- 
+<p>--&gt;</p>
+<!-- \begin{figure}
+
+\end{figure} -->
+<p>在实际应用中，我们可以根据场景和图挖掘任务的不同对这两个参数进行设置。例如，</p>
+<hr>
+<p>deepWalk和node2vec是NLP领域的文本嵌入模型在图结构上的一种实现，它们给很多已经在工业界落地的应用模型提供了理论基础。deepWalk出现后，有许多工业界模型都在它的基础上结合业务场景进行了改进，在实际应用上取得了不错的效果。</p>
+<h3 id="衍生模型">衍生模型</h3>
+<h4 id="airbnb---real-time-personalization-using-embeddings-for-search-ranking-at-airbnb">Airbnb - Real-time Personalization using Embeddings for Search Ranking at Airbnb</h4>
+<p>Airbnb是一个民宿平台，同时对房东和租客开放。房东可以在平台上发布房源信息，租客通过搜索选取自己心仪的房源(<strong><em>list</em></strong>)进行预定。同时，房东也可以决定是否接受租客的预定。Airbnb的目标在于，如何在搜索中<strong>实时</strong>向用户推荐更符合他们<strong>偏好</strong>（preference）的房源信息。论文把这个问题具体化为，如何基于几种平台上有效的用户和租客行为<strong>点击</strong>(click)，<strong>预定</strong>)(booking)，<strong>拒绝预定</strong>(reject)生成有效的list embeddings。</p>
+<p>Airbnb把用户偏好分为了<strong>短期兴趣</strong>(short-term interest)和<strong>长期兴趣</strong>(long-term interest)。短期兴趣捕捉用户实时搜索浏览的房源特征，长期兴趣则更多从用户的预定历史中挖掘更普遍的兴趣偏好，例如一个当前在浏览巴黎房源信息的租客，他过去在洛杉矶预定的房源特征同样可以提供一种偏好信息(cross-market similarities)。</p>
+<!-- 其中，短期兴趣为实时采集一个固定时间窗口内用户点击list的序列(click session)，论文中设定的时间窗口为30min。
+Airbnb通过click session生成了list sequences，包含了用户短期内对于list的偏好信息。在训练过程中，Airbnb结合自身业务场景进行了：
+ -->
+<h5 id="短期兴趣">短期兴趣</h5>
+<p>在word2vec的部分我们说过，把词向量嵌入应用到别的场景下的一个关键就是如何生成包含有效信息的序列，通过学习这部分有效的“上下文”信息来获取embeddings。Airbnb结合自身业务场景的embedding策略可总结为以下三点：</p>
+<ul>
+<li>每个租客30min内点击的list为一个click session，即由list组成的序列。序列对应词嵌入模型中的“句子”，每个list对应句子中的“词语”，点击信息对应“上下文信息”；</li>
+<li>把每个租客的历史预定作为booked list，假设booked list始终与central list有关；</li>
+<li>租客一段时间内的点击行为会有一个特殊的location偏好。例如一个准备去巴黎的租客不会浏览伦敦的房源信息。为了缓解负采样中大量负样本极有可能来源于不同地区这一问题，在目标函数引入当前central list相同位置的负样本集。</li>
+</ul>
+<p>接下来，套入到word2vec中，以skip-gram + negative sampling为例我们直接给出目标函数。其中，l为当前的central list，对应中心词<span class="math inline">\(w_c\)</span>；c为context list，对应背景词<span class="math inline">\(w_o\)</span>。<span class="math inline">\(D_p\)</span>为正样本集，<span class="math inline">\(D_n\)</span>为负样本集。<span class="math inline">\(D_{m_n}\)</span> 为采样自与当前click list相同location的负样本集。</p>
+<img src="/2021/05/14/Embeddings-in-Recommedation-System/airbnb_objfunc.png" class="">
+<!-- $$
+argmax_{\theta} \sum_{(l, c)\in D_p} log \frac {1}{1+e^{-v^{'}_cv_l}} +
+\sum_{(l, c)\in D_n} log \frac {1}{1+e^{v^{'}_cv_l}} +
+log \frac {1}{1+e^{-v^{'}_{l_b}v_l}} +
+\sum_{(l, m_n)\in D_{m_n}} log \frac {1}{1+e^{v^{'}_{m_n}v_l}}
+$$ -->
+<p>除此之外，Airbnb还指出了如何在短期兴趣的学习中解决冷启动的问题。如果有新的list出现，则在附近(within a 10 miles radius)寻找三个相同类型，价格接近的lists，将它们embedding的平均作为new list的embedding。</p>
+<h5 id="长期兴趣">长期兴趣</h5>
+<p>到这里，Airbnb通过click session成功学习到了short-term interest的list embedding。然而，对于长期兴趣(booking history)却很难用book session去训练，原因是我们没有足够的数据，这在训练过程中会带来严重的数据稀疏问题。因此，Airbnb不再直接学习user embeddings和list embeddings，而是转而学习<strong><em>user_type embeddings</em></strong>和<strong><em>list_type embeddings</em></strong>。这相当于提前进行了一个类型聚类，可以一定程度上解决冷启动问题。</p>
+<p>以论文中的表格为例，无论是用户还是房源都会存在基础属性信息，Airbnb把这些基础信息组合起来表示user_type和list_type。例如一个美国的房源，房源基础信息为bucket 1，每晚价格60美金为bucket 3，则该房源的<span class="math inline">\(listing\_type = US\_lt_1\_pn3\)</span>。user_type同理。因此，Airbnb把book session中的sequence定义为user_type和list_type的组合--&gt;(<span class="math inline">\(u_{type_1}l_{type_1}, ..., u_{type_M}l_{type_M}\)</span>)，同一user的user_type可能会随时间变化而有所不同。</p>
+<img src="/2021/05/14/Embeddings-in-Recommedation-System/list_type_table.jpeg" class="">
+<p>有了sequence之后就继续延用word2vec + negative sampling的训练模式，如下图所示，图中红色部分为房主的reject信息，与上述负采样信息类似，旨在用这部分信息降低租客被拒绝的概率。由于sequence中既有user_type又有list_type，因此训练过程实际上是把它们当成了完全相同的节点，映射到了同一个向量空间里。这里的处理方式我<strong>暂时存疑</strong>。</p>
+<img src="/2021/05/14/Embeddings-in-Recommedation-System/long_term_train.png" class="">
+<hr>
+<!-- Airbnb将短期兴趣学习到的list_embedding用于实时的搜索推荐，将长期兴趣学习到的user_type_embedding和list_type_embedding的cosine相似度 -->
+<p>Airbnb将点击行为序列直接用于词嵌入模型的输入。然而，这样的训练数据可能是不充分的。例如，本来相似的item在独立的用户行为序列中可能并不存在共现，用户1可能浏览了ABC，用户2可能浏览了CD，在训练数据中并不存在的ABCD序列，这可能会使模型不能学习到A与D以及B与D的这部分相似性信息。</p>
+<!-- 此外，对于冷启动的问题，Airbnb -->
+<h4 id="eges---billion-scale-commodity-embedding-for-e-commerce-recommendation-in-alibaba">EGES - Billion-scale Commodity Embedding for E-commerce Recommendation in Alibaba</h4>
+<p>阿里的这篇论文主要在于解决推荐中的召回部分。其中亮点在于引入side information对冷启动问题的解决。</p>
+<p>在学习item_embeddings时，阿里同样使用了基于用户session生成的序列作为词嵌入模型的输入。与Airbnb不同的是，阿里没有直接使用用户的点击序列，而是用不同用户的点击行为先组成一个有向图。如下图所示，用户U1在一个时间窗口内先后点击了D和A，则建立一条由D指向A的边。如果有另一个用户也有相同顺序的点击行为，那么D和A之间边的权重会加1。在基于session构造了item graph后，利用deepWalk的思想，先进行随机游走生成序列，再利用词嵌入模型进行训练。</p>
+<img src="/2021/05/14/Embeddings-in-Recommedation-System/eges_frm.png" class="">
+<p>然后上述基于用户行为的建图及游走过程无法解决冷启动问题，对于用户行为很少的item并不能输出满意的embedding结果。因此，这篇论文在训练阶段引入了item的side information作为可学习的特征，在用户行为很少的情况下期望利用这部分特征来对item进行有效的表示。如下图所示，<em>SI 0</em>为item本身的特征，即上述session中学到的embedding。对于新item这部分可以初始化为0向量。<em>SI 1,... SI n</em>为不同类型的side information，</p>
+<img src="/2021/05/14/Embeddings-in-Recommedation-System/side_info.png" class="">
+<p>在隐含层对代表不同信息的embedding进行了聚合。论文中给出了两种聚合方法，一种是普通的average pooling，另一种则是加权平均。后者在特征融合阶段又增加一个可训练的权重矩阵，考虑不同信息对于最后得到的item_embedding的重要程度。这里其实已经有了应用attention的初步想法，论文的future work里也提到了这一点。</p>
+<p><strong><em>在NLP中，一个句子中词的存在天然的语义关系，因此word2vec所学习到的这部分序列信息是有意义的。然而在推荐系统中，用户的点击行为之间可能并不存在很强的序列关系。？？？？</em></strong></p>
+<hr>
+<p>以上两种图嵌入的方法都是对同构图(Homogenous Network)的处理，即节点类型只有一种的图：对于图<span class="math inline">\(G\)</span>，有 <span class="math inline">\(|Type_v| = 1\)</span> &amp; <span class="math inline">\(|Type_e| = 1\)</span>。然而我们常见的很多图结构都是异构图(Heterogenous Network)，即节点类型不止有一种的图：对于图<span class="math inline">\(G\)</span>，<span class="math inline">\(|Type_v| \geq 1\)</span> or <span class="math inline">\(|Type_e| \geq 1\)</span>。</p>
+<p>deepWalk等基于节点进行随机游走的方法，在涉及信息更复杂的异构图时，表现可能很差。在异构图中，节点和边共同构成完整的语义信息(semantics)，基于节点的随机游走会割裂这种关系。以下图学术网络这个典型的异构图为例，网络中存在四种节点类型，不同节点之间的边包含不同的语义信息。例如，author节点<span class="math inline">\(a_1\)</span>和paper节点<span class="math inline">\(p_1\)</span>的边代表<span class="math inline">\(a_1\)</span>是<span class="math inline">\(p_1\)</span>的作者，而<span class="math inline">\(a_1\)</span>和<span class="math inline">\(a_2\)</span>之间的边则代表了两人是coauthor的关系。由于author类型的节点数比较多，基于节点的随机游走生成的大部分序列中都会包含author节点。在限定游走的步数的前提下，数目比较少的节点类型如org出现的概率会很小。在异构图中特定语义信息约束下，会导致这部分节点及边信息训练数据不够，因此无法生成令人满意的embedding。</p>
+<p>在异构图中，存在一种元路径的定义。同样以学术网络为例，APA和APVPA是两种metapath，前者代表了两个作者为一篇论文的coauthor，后者代表两个不同作者在同一个venue发表过论文。可以看出，元路径实际代表了不同类型节点或者相同类型节点之间存在的某种特定关系。</p>
+<h3 id="metapath2vec">metapath2vec</h3>
+<p><a href="#metapath2vec">metapath2vec</a>基于元路径对deepWalk的模式进行了改进。metapath2vec的基本架构和deepWalk类似，即随机游走生成序列加上skip gram训练模型，区别在于：</p>
+<ul>
+<li><p>metapath2vec采用了基于元路径的随机游走来生成序列。提前定义的元路径作为一种先验信息在指导着随机游走，使得生成的序列都是符合图中原本语义的，这很好地捕捉了图中的异构信息。</p></li>
+<li><p>metapath2vec采用了异构skip gram模型。如下图公式阴影部分所示，与普通的skip gram的区别在于定义了不同类型节点的异构邻域。</p></li>
+</ul>
+<img src="/2021/05/14/Embeddings-in-Recommedation-System/hete_skip_gram.png" class="">
+<!-- 我在查阅资料的过程中，在KM上看到了微视团队发的一篇graph embedding结合具体业务场景模型落地的文章([weishi]: url "title")。微视团队在实验过程中，构造了不同类型的标签节点将用户行为生成的同构图扩展为了异构图，再通过metapath2vec的方法基于定义的元路径进行随机游走。这提供了另外一种引入side information的方式。 -->
+<h3 id="hin2vec">HIN2Vec</h3>
+<p>除此之外，论文[HIN2Vev]中提出了另外一种可以保持异构网络语义信息的方法：以图中多种关系类型为label训练一个多分类模型，来预测任意两个节点之间可能存在的关系。与metapath2vec类似，HIN2Vec也默认元路径中包含了异构图中的多种关系信息，因此利用这部分信息指导embedding的生成。不同的是，HIN2Vec没有在随机游走的过程中以元路径作为指导，而是依然以节点进行随机游走生成节点序列，将metapath定义为图中的关系类型集合，作为label训练多分类器。HIN2Vec的最初设想是，给定节点对 <span class="math inline">\(&lt;x, y&gt;\)</span> ，预测节点之间的存在系集合<span class="math inline">\(R\)</span>中的哪几种关系。然而，找寻所有可能的关系是不现实的。因此。HIN2Vec将多分类问题简化为二分类问题：</p>
+<img src="/2021/05/14/Embeddings-in-Recommedation-System/hin2vec.png" class="">
+<p>以上图为例，关系<span class="math inline">\(r\)</span>取自预先定义的由元路径组成的关系集合<span class="math inline">\(R\)</span>。HIN2Vec通过判断节点对<span class="math inline">\(&lt;x, y&gt;\)</span> 之间是否存在关系<span class="math inline">\(r\)</span>来训练一个二分类模型，将异构网络中的信息集成在分类器的权重<span class="math inline">\(W\)</span>中。</p>
+<p>question: metapath真的可以包含异构图的关系信息吗？</p>
+<hr>
+<p>metapath作为一种先验知识，可以很好地指导embedding的训练过程。然而，图结构展开的序列信息终归只是低阶的局部信息，</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/coding/" rel="tag"># coding</a>
+          
+            <a href="/tags/DL/" rel="tag"># DL</a>
+          
+            <a href="/tags/graph-embedding/" rel="tag"># graph_embedding</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/05/02/recommender-system/" rel="next" title="recommender system">
+                <i class="fa fa-chevron-left"></i> recommender system
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/06/16/Graph-Embedding/" rel="prev" title="Graph Embedding">
+                Graph Embedding <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/lukeandartoo.jpg"
+                alt="" />
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7Carchive">
+              
+                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="rigel_6918@163.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#svd"><span class="nav-number">1.</span> <span class="nav-text">SVD</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#factorization-machine"><span class="nav-number">2.</span> <span class="nav-text">Factorization Machine</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#embeddings"><span class="nav-number"></span> <span class="nav-text">embeddings</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80word2vec"><span class="nav-number">1.</span> <span class="nav-text">理论基础：word2vec</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B4%9F%E9%87%87%E6%A0%B7"><span class="nav-number">1.1.</span> <span class="nav-text">负采样</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#deepwalk"><span class="nav-number">2.</span> <span class="nav-text">deepWalk</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#node2vec"><span class="nav-number">3.</span> <span class="nav-text">node2vec</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%8D%E7%94%9F%E6%A8%A1%E5%9E%8B"><span class="nav-number">4.</span> <span class="nav-text">衍生模型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#airbnb---real-time-personalization-using-embeddings-for-search-ranking-at-airbnb"><span class="nav-number">4.1.</span> <span class="nav-text">Airbnb - Real-time Personalization using Embeddings for Search Ranking at Airbnb</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%9F%AD%E6%9C%9F%E5%85%B4%E8%B6%A3"><span class="nav-number">4.1.1.</span> <span class="nav-text">短期兴趣</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%95%BF%E6%9C%9F%E5%85%B4%E8%B6%A3"><span class="nav-number">4.1.2.</span> <span class="nav-text">长期兴趣</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#eges---billion-scale-commodity-embedding-for-e-commerce-recommendation-in-alibaba"><span class="nav-number">4.2.</span> <span class="nav-text">EGES - Billion-scale Commodity Embedding for E-commerce Recommendation in Alibaba</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#metapath2vec"><span class="nav-number">5.</span> <span class="nav-text">metapath2vec</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hin2vec"><span class="nav-number">6.</span> <span class="nav-text">HIN2Vec</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">风鸣北川_rigel</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
