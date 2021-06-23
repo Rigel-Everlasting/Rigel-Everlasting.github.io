@@ -101,7 +101,7 @@
 <meta property="og:image" content="http://yoursite.com/2021/06/21/graph-embedding-0/hete_skip_gram.png">
 <meta property="og:image" content="http://yoursite.com/2021/06/21/graph-embedding-0/hin2vec.png">
 <meta property="article:published_time" content="2021-06-21T03:40:01.000Z">
-<meta property="article:modified_time" content="2021-06-23T11:01:34.077Z">
+<meta property="article:modified_time" content="2021-06-23T11:12:28.803Z">
 <meta property="article:author" content="风鸣北川_rigel">
 <meta property="article:tag" content="coding">
 <meta property="article:tag" content="DL">
@@ -443,7 +443,7 @@ L = -log \frac {1} {1+e^{-u_o^T \cdot v_c}} - \sum_{k=1, w_k～P(w)}^K log \frac
 <li>把每个租客的历史预定作为booked list，假设booked list始终与central list有关，即始终出现在当前训练窗口；</li>
 <li>租客一段时间内的点击行为会有一个特殊的location偏好。例如一个准备去巴黎的租客不会浏览伦敦的房源信息。为了缓解负采样中大量负样本极有可能来源于不同地区这一问题，在目标函数引入与当前central list具有相同位置信息的负样本集。</li>
 </ul>
-<p>接下来，套入到word2vec中，以skip-gram + negative sampling为例我们直接给出目标函数。其中，l为当前的central list，对应中心词<span class="math inline">\(w_c\)</span>；c为context list，对应背景词<span class="math inline">\(w_o\)</span>。<span class="math inline">\(D_p\)</span>为正样本集，<span class="math inline">\(D_n\)</span>为负样本集。<span class="math inline">\(D_{m_n}\)</span> 为采样自与当前click list相同location的负样本集。</p>
+<p>有了“上下文”序列后，我们直接看模型的目标函数，可以看出，训练是基于负采样的skip-gram。其中，l为当前的central list，对应中心词<span class="math inline">\(w_c\)</span>；c为context list，对应背景词<span class="math inline">\(w_o\)</span>。<span class="math inline">\(D_p\)</span>为正样本集，<span class="math inline">\(D_n\)</span>为负样本集。<span class="math inline">\(D_{m_n}\)</span> 为采样自与当前click list相同location的负样本集。</p>
 <img src="/2021/06/21/graph-embedding-0/airbnb_objfunc.png" class="">
 <!-- $$
 argmax_{\theta} \sum_{(l, c)\in D_p} log \frac {1}{1+e^{-v^{'}_cv_l}} +
@@ -512,16 +512,16 @@ $$ -->
 <p>对于文中所提的同质性和结构性，有个问题困扰了我很久。因为从直觉上来说，DFS策略能走到更远的节点，距离很远的两个簇的中心更容易出现在DFS的游走序列里，因此更能捕捉全局结构信息；而BFS策略更多的是在节点周围游走，相聚很远的两个簇中心，即使结构相似，也不太可能频繁出现在BFS的序列里。那么<strong><em>为什么是BFS更能捕捉结构信息，DFS反而是捕捉同质信息</em></strong>？这个问题我查了很久也没有得到一个很有说服力的结论，可能最终还是要看实验结果。希望有经验的同学可以解惑。</p>
 <p><strong><em>P.S.</em></strong> 对deepWalk和node2vec的讲解，强推斯坦福大学CS224W课程(Machine Learning with Graph)中Graph Representation Learning这一节。<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=YrhBZUtgG4E&amp;t=2983s">课程链接点我</a>, <a target="_blank" rel="noopener" href="http://snap.stanford.edu/class/cs224w-2018/handouts/09-node2vec.pdf">slides点我</a>。</p>
 <hr>
-<p>deepWalk和node2vec是word2vec在图结构上的一种实现，它们给很多已经在工业界落地的应用模型提供了思路。有许多工业界模型都在它的基础上结合业务场景进行了改进，在实际应用上取得了不错的效果。</p>
-<!-- 此外，对于冷启动的问题，Airbnb -->
+<p>deepWalk给很多应用模型提供了思路，有许多工业界模型都在它的基础上结合业务场景进行了改进，在实际应用上取得了不错的效果。</p>
 <h3 id="工业界应用-eges---billion-scale-commodity-embedding-for-e-commerce-recommendation-in-alibaba">工业界应用: EGES - Billion-scale Commodity Embedding for E-commerce Recommendation in Alibaba</h3>
 <p><a target="_blank" rel="noopener" href="https://arxiv.org/pdf/1803.02349.pdf">论文原文</a></p>
-<p>阿里的这篇论文主要在于解决推荐中的召回部分。其中亮点在于引入side information对冷启动问题的解决。</p>
-<p>在学习item_embeddings时，阿里同样使用了基于用户session生成的序列作为词嵌入模型的输入。与Airbnb不同的是，阿里没有直接使用用户的点击序列，而是用不同用户的点击行为先构造一个有向图。如下图所示，用户U1在一个时间窗口内先后点击了D和A，则建立一条由D指向A的边。如果有另一个用户也有相同顺序的点击行为，那么D和A之间边的权重会加1。在基于session构造了item graph后，利用deepWalk的思想，先进行随机游走生成序列，再利用词嵌入模型进行训练。</p>
+<p>阿里的这篇论文重点解决推荐系统中的召回部分。其主要亮点在于引入side information对冷启动问题的解决。</p>
+<p>在学习item_embeddings时，和Airbnb类似，阿里同样使用了基于用户session生成的序列作为词嵌入模型的输入。与Airbnb不同的是，阿里没有直接使用用户的点击序列，而是用不同用户的点击行为先构造一个有向图。如下图所示，用户U1在一个时间窗口内先后点击了D和A，则建立一条由D指向A的边。如果有另一个用户也有相同顺序的点击行为，那么D和A之间边的权重会加1。在基于session构造了item graph后，利用deepWalk的思想，先进行随机游走生成序列，再利用词嵌入模型进行训练。</p>
 <img src="/2021/06/21/graph-embedding-0/eges_frm.png" class="">
 <p>然而，上述基于用户行为的建图及游走过程无法解决冷启动问题，对于用户行为很少的item并不能输出满意的embedding结果。因此，这篇论文在训练阶段引入了item的side information作为可学习的特征，在用户行为很少的情况下期望利用这部分特征来对item进行有效的表示。如下图所示，<em>SI 0</em> 为item本身的特征，即上述session中学到的embedding。对于新item这部分可以初始化为0向量。<em>SI 1,... SI n</em> 为不同类型的side information，</p>
 <img src="/2021/06/21/graph-embedding-0/side_info.png" class="">
-<p>在隐含层对代表不同信息的embedding进行了聚合。论文中给出了两种聚合方法，一种是普通的average pooling，另一种则是加权平均。后者在特征融合阶段又增加一个可训练的权重矩阵，考虑不同信息对于最后得到的item_embedding的重要程度。在论文的future work里，也提到了这一部分可以使用attention机制来做。</p>
+<p>在隐含层对代表不同信息的embedding进行了聚合。论文中给出了两种聚合方法，一种是普通的average pooling，另一种则是加权平均。后者在特征融合阶段又增加一个可训练的权重矩阵，考虑不同信息对于最后得到的item_embedding的重要程度。</p>
+<!-- 在论文的future work里，也提到了这一部分可以应用attention机制。 -->
 <!-- ***在NLP中，一个句子中词的存在天然的语义关系，因此word2vec所学习到的这部分序列信息是有意义的。然而在推荐系统中，用户的点击行为之间可能并不存在很强的序列关系。？？？？*** -->
 <hr>
 <p>deepWalk等基于节点进行随机游走的方法，在涉及信息更复杂的异构图时，表现可能很差。在异构图中，节点和边共同构成完整的语义信息(semantics)，基于节点的随机游走会割裂这种关系。以下图学术网络这个典型的异构图为例，网络中存在四种节点类型，不同节点之间的边包含不同的语义信息。例如，author节点<span class="math inline">\(a_1\)</span>和paper节点<span class="math inline">\(p_1\)</span>的边代表<span class="math inline">\(a_1\)</span>是<span class="math inline">\(p_1\)</span>的作者，而<span class="math inline">\(a_1\)</span>和<span class="math inline">\(a_2\)</span>之间的边则代表了两人是coauthor的关系。由于author类型的节点数比较多，基于节点的随机游走生成的大部分序列中都会包含author节点。在限定游走的步数的前提下，数目比较少的节点类型如org出现的概率会很小。在异构图中特定语义信息约束下，会导致这部分节点及边信息训练数据不够，因此无法生成令人满意的embedding；此外，在语义关系明确的异构图中，deepWalk可能会产生信息不明确的序列。例如，以节点<span class="math inline">\(a_1\)</span>为顶点进行步长为5的随机游走时，一个可能的序列是{<span class="math inline">\(a_1, a_2, a_3, a_4, CMU\)</span>}。然而，<span class="math inline">\(a_1\)</span>和<span class="math inline">\(CMU\)</span>并没有明确的关系，这样可能会在<span class="math inline">\(a_1\)</span>中错误包含并不那么重要的信息，影响embedding的质量。</p>
