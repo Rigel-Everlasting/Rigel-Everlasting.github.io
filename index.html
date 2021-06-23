@@ -359,24 +359,31 @@
 </p>
 <hr>
 <p>图结构(Graph)广泛存在于现实各种应用场景。如在社交媒体中，用户之间的关注关系构成一个大的社交网络；又如推荐系统中，用户对商品的关注、评分等行为把可以抽象成用户和商品的交互图。然而，现实中的图结构大多都很复杂，如一个社交媒体中可能有几十亿用户、几千万条边；同时，图中的连接关系可能包含复杂的信息，如一个用户对商品的反馈可能是正面的，也可能是负面的。因此，如何有效地对图结构进行建模是学术界和工业界持续关注的焦点。</p>
+<img src="/2021/06/21/graph-embedding-0/graph_emb_1.png" class="">
 <p>图嵌入(Graph Embedding)为此提供了很好的解决问题的方法。嵌入(Embedding)的思想是：我们希望可以把节点的特征信息嵌入到一个低维空间中，使得有邻接节点在低维空间中的特征向量彼此靠近，以此达到降维和图表示学习的目的。如果我们以数学语言描述图嵌入问题：</p>
 <p>给定图<span class="math inline">\(G=(V, E)\)</span>，其中<span class="math inline">\(V\)</span>代表节点(<strong>Vertex</strong>)集合，<span class="math inline">\(E\)</span>代表图中边(<strong>Edge</strong>)集合。定义变量<span class="math inline">\(Type_v\)</span>，<span class="math inline">\(Type_e\)</span>，分别代表图中节点类型集合和边类型集合。对于图<span class="math inline">\(G\)</span>，当 <span class="math inline">\(|Type_v| + |Type_e| = 2\)</span>时，我们称<span class="math inline">\(G\)</span>为同构图(Homogenous Network)，即节点类型和边类型只有一种的图，比如社交网络；对于图<span class="math inline">\(G\)</span>，当 <span class="math inline">\(|Type_v| + |Type_e| \geq 3\)</span> 时，我们称<span class="math inline">\(G\)</span>为异构图(Heterogenous Network)，即节点类型边类型不止有一种的图，比如用户和商品的关系图。</p>
 <p>对于图中节点<span class="math inline">\(u \in V\)</span> ，定义节点<span class="math inline">\(u\)</span>的<strong>邻域</strong>(<strong>neighborhood</strong>)为<span class="math inline">\(N_u\)</span>，我们希望找到一种方法<span class="math inline">\(f:u\rightarrow R^{d \times |V|}\)</span>，将节点特征映射到一个低维度的向量空间中，空间中的向量 <span class="math inline">\(e_u \in R^{d \times |V|}\)</span> 能够很好地聚合<span class="math inline">\(u\)</span>的邻域信息，使得 <span class="math inline">\(v \in N_u\)</span>的向量 <span class="math inline">\(e_v \in R^{d \times |V|}\)</span> 在嵌入空间中与<span class="math inline">\(e_u\)</span>尽可能接近。如下图所示，我们把 <span class="math inline">\(R^{d \times |V|}\)</span> 称为嵌入空间(Embedding Space)，<span class="math inline">\(f\)</span>就是我们希望找到的嵌入方法。</p>
-<img src="/2021/06/21/graph-embedding-0/graph_emb.png" class="">
+<img src="/2021/06/21/graph-embedding-0/graph_emb_2.png" class="">
 <p>本文介绍了常见的Graph Embedding算法及其变体，另外还会对Graph Embedding在工业界实际业务场景中的落地情况进行简单的介绍和总结，重点放在NLP领域word2vec模型出现之后以此为基础提出的图嵌入方法。</p>
 <p>本文目录如下：</p>
-<h2 id="matrix-factorization">Matrix Factorization</h2>
-<p>矩阵分解的理论基础来源于数学中的伪奇异值分解(Singular Value Deposition)。之所以是奇异值分解而不是特征值分解，是因为在实际场景中我们要分解的矩阵不一定是方阵。它在推荐系统中有着广泛的应用，对推荐系统熟悉的同学一定记得2006年netflix的那场著名的比赛，矩阵分解在那场比赛中大放异彩。</p>
-<p>以user-item-rating这一矩阵为例，矩阵分解将大矩阵<span class="math inline">\(R:m \times n\)</span> 分解为两个小矩阵<span class="math inline">\(U:m \times k\)</span>，<span class="math inline">\(I:k \times n\)</span> 的乘积：</p>
-<p><span class="math display">\[R = U\times I\]</span></p>
-<p>这其中的k维向量，代表隐因子（Latent Factor）向量。矩阵分解认为，隐因子一定程度上代表了user和item的某种属性。在user-item-rating这一特定的矩阵中，这两个子矩阵可以分别代表user的偏好程度和item的成分属性。以电影评分矩阵为例，隐因子的<span class="math inline">\(K\)</span>维可能代表<span class="math inline">\(K\)</span>种电影的成分类型，如悬疑成分、科幻成分等等，那么分解得到的用户矩阵<span class="math inline">\(U\)</span>的第k维<span class="math inline">\(U_k\)</span>则代表了用户对于这一成分的偏好程度， 电影矩阵<span class="math inline">\(I\)</span>的第k维<span class="math inline">\(I_k\)</span>则代表了电影内这一成分的占比。矩阵分解认为，用户对不同成分的偏好与电影中不同成分的占比的乘积代表了用户对电影的评分。</p>
+<!-- ## Matrix Factorization
+
+矩阵分解的理论基础来源于数学中的伪奇异值分解(Singular Value Deposition)。之所以是奇异值分解而不是特征值分解，是因为在实际场景中我们要分解的矩阵不一定是方阵。它在推荐系统中有着广泛的应用，对推荐系统熟悉的同学一定记得2006年netflix的那场著名的比赛，矩阵分解在那场比赛中大放异彩。
+
+以user-item-rating这一矩阵为例，矩阵分解将大矩阵$R:m \times n$ 分解为两个小矩阵$U:m \times k$，$I:k \times n$ 的乘积：
+
+$$R = U\times I$$
+
+这其中的k维向量，代表隐因子（Latent Factor）向量。矩阵分解认为，隐因子一定程度上代表了user和item的某种属性。在user-item-rating这一特定的矩阵中，这两个子矩阵可以分别代表user的偏好程度和item的成分属性。以电影评分矩阵为例，隐因子的$K$维可能代表$K$种电影的成分类型，如悬疑成分、科幻成分等等，那么分解得到的用户矩阵$U$的第k维$U_k$则代表了用户对于这一成分的偏好程度，
+电影矩阵$I$的第k维$I_k$则代表了电影内这一成分的占比。矩阵分解认为，用户对不同成分的偏好与电影中不同成分的占比的乘积代表了用户对电影的评分。
+
 <img src="/2021/06/21/graph-embedding-0/mf.png" class="">
 <p>对于user-item-rating矩阵而言，评分的预测实际上是一个补全矩阵的过程。原本的矩阵中，有一部分有评分，而有一部分没有。因此，矩阵分解的目标是使得最终得到的两个小矩阵的乘积可以很好地补全大矩阵中没有评分的未知项，如何获得这两个最优的小矩阵即如何学习到满意的可以代表user、item属性的嵌入向量矩阵。在应用中，我们可以以评分的部分与预测得到的评分误差最小为基础构造损失函数，再利用随机梯度下降等方法进行模型训练。然而，矩阵分解的方法在大规模数据集下训练会很慢。</p>
-<p><strong><em>P.S.</em></strong> 对于矩阵分解的详细介绍这里推荐xx的三篇km文章<a href="">1</a>，<a href="">2</a>，<a href="">3</a>，从原理到应用都介绍得十分精彩。</p>
+<p><strong><em>P.S.</em></strong> 对于矩阵分解的详细介绍这里推荐xx的三篇km文章<a href="">1</a>，<a href="">2</a>，<a href="">3</a>，从原理到应用都介绍得十分精彩。 --&gt;</p>
 <!-- 再推荐一篇[博客]()，介绍十分详细具体。 -->
-<hr>
+<!-- <hr> -->
 <p>13年Google的Mikilov等人提出的Word2vec模型，正式为我们开启了“万物皆可embedding”的时代。Word2vec认为，同一语义上下文的单词存在天然的语义联系，例如：“an example”。因此，它提出利用同一上下文的单词来学习各自的词嵌入表示（word embedding）。相比传统的词袋模型（one-hot词编码），通过Word2vec学习的词向量在情感分析和语义建模等NLP相关任务上表现出了优异的单词表达能力。此外，Word2vec模型也被广泛用于各类任务，例如微软提出的Item2vec模型等。同时，它也是众多graph embedding模型的重要组成部分。因此，本文的第一步需要为大家深入浅出一下Word2vec这一开山大作。</p>
-<h2 id="graph-embeddings">Graph Embeddings</h2>
+<!-- ## Graph Embeddings -->
 <h3 id="word2vec">word2vec</h3>
 <p><a target="_blank" rel="noopener" href="https://papers.nips.cc/paper/2013/file/9aa42b31882ec039965f3c4923ce901b-Paper.pdf">论文原文</a></p>
 <p>滑动窗口(<em>Window</em>)是word2vec模型中非常关键的部分，word2vec用其来捕捉语义上下文，并利用滑动操作学习每一个句子序列上单词的embedding。如句子“拜仁是欧冠冠军”由词语“拜仁，是，欧冠，冠军”组成。我们以“欧冠”这个词语为中心，考虑窗口大小为2的词，那么“拜仁，是，冠军”这几个词语就是“欧冠”的上下文。我们把“欧冠”定义为<strong>中心词</strong>(<em>Center Word</em>)，把上下文词语定义为<strong>背景词</strong>(<em>Context Word</em>)。在word2vec中，每个词语都有两个向量，即中心词向量和背景词向量，取决于当前时刻该词语的角色。word2vec提供了两种方法，分别是以中心词向量生成背景词向量概率分布的skip-gram模型，和以背景词向量生成中心词向量概率分布的c-bow模型。由于它们的模型结构是类似的，本文将以skip-gram为例进行进一步的解释。在skip-gram中，word2vec希望通过最大化背景词出现的概率来对中心词进行有效的表示。即当我们的输入的中心词是“欧冠”时，我们希望输出背景词的概率分布列中，“拜仁”，“是”，“冠军”对应位置的概率最大。</p>
@@ -477,10 +484,10 @@ $$ -->
 <h3 id="node2vec">node2vec</h3>
 <p><a target="_blank" rel="noopener" href="https://cs.stanford.edu/~jure/pubs/node2vec-kdd16.pdf">论文原文</a></p>
 <p>可以看出，游走策略<span class="math inline">\(R\)</span>实际上起到了定义节点邻域的作用，它决定了生成的序列可能包含什么样的信息，也就决定了embedding中包含了什么信息。在deepWalk中，均匀的随机游走策略无法捕捉到相隔较远的两个节点之间的相似性，因此，另一算法node2vec对deepWalk的游走策略进行了改进。</p>
-<p>node2vec采用了更加灵活的方式来生成邻域<span class="math inline">\(N_{R(u)}\)</span>，使得捕捉到的相似性信息可以在<strong>局部信息</strong>和<strong>全局信息</strong>之间进行一个权衡。我们知道，对图的遍历有两种策略，分别是<strong>BFS</strong>（深度优先搜索）和<strong>DFS</strong>（广度优先搜索）。这两种策略恰恰对应了两种不同的定义节点邻域的方式：</p>
+<p>node2vec认为，图结构主要表征了两种类型的相似性，一种为<strong>同质性</strong>，一种为<strong>结构性</strong>。同质性认为，图中属于同一个簇或社群的节点应该相似；而结构性则认为，在不同簇或社群中角色相同的节点应该相似。node2vec因此采用了更加灵活的方式来生成邻域<span class="math inline">\(N_{R(u)}\)</span>，分别是对图的<strong>BFS</strong>（深度优先搜索）和<strong>DFS</strong>（广度优先搜索），使得模型可以捕捉这两种不同的相似性信息。</p>
 <ul>
-<li><p>BFS: 局部信息(local microscopic view)</p></li>
-<li><p>DFS: 全局信息(global macroscopic view)</p></li>
+<li><p>BFS: 局部信息(local microscopic view)，更能捕捉结构性</p></li>
+<li><p>DFS: 全局信息(global macroscopic view)，更能捕捉同质性</p></li>
 </ul>
 <p>因此，node2vec给定两个超参数用以指导随机游走：</p>
 <ul>
@@ -488,8 +495,9 @@ $$ -->
 <li><p>in-out parameter \<span class="math inline">\(q\)</span>: 控制是否远离当前节点（DFS）或靠近当前节点（BFS）</p></li>
 </ul>
 <img src="/2021/06/21/graph-embedding-0/node2vec.png" class="">
-<p>这两个超参数控制随机游走的转移概率。<span class="math inline">\(1/p\)</span>控制着返回上一个节点的概率。<span class="math inline">\(p\)</span>越小，随机游走生成的序列越接近于BFS遍历，序列所捕获的邻域信息越接倾向于局部信息；<span class="math inline">\(1/q\)</span>控制着更远一步的概率。<span class="math inline">\(q\)</span>越小，随机游走生成的序列越接近于DFS遍历，序列所捕获的邻域信息越接倾向于全局信息。前者更适用于捕捉community之间的相似性，后者更适合于捕捉图中的层次化/结构化信息。以社交网络为例，前者更适合捕捉社群信息，如给用户推荐相似好友。后者则更适合捕捉用户在社交网络中的角色信息，如果两位用户好友都很多，则他们都位于一个社群的中心位置，在后者的游走策略之下，他们在嵌入空间中的向量就会比较相似，如下图所示。</p>
+<p>这两个超参数控制随机游走的转移概率。<span class="math inline">\(1/q\)</span>控制着更远一步的概率。<span class="math inline">\(q\)</span>越小，随机游走生成的序列越接近于DFS遍历，序列所捕获的邻域信息越接倾向于全局信息；<span class="math inline">\(1/p\)</span>控制着返回上一个节点的概率。<span class="math inline">\(p\)</span>越小，随机游走生成的序列越接近于BFS遍历，序列所捕获的邻域信息越接倾向于局部信息。前者更适用于捕捉community之间的相似性，后者更适合于捕捉图中的层次化/结构化信息。以社交网络为例，前者更适合捕捉社群信息，如给用户推荐相似好友。后者则更适合捕捉用户在社交网络中的角色信息，如果两位用户好友都很多，则他们都位于一个社群的中心位置，在后者的游走策略之下，他们在嵌入空间中的向量就会比较相似，如下图所示。</p>
 <img src="/2021/06/21/graph-embedding-0/node2vec_res.png" class="">
+<p>对于文中所提的同质性和结构性，有个问题困扰了我很久。因为从直觉上来说，DFS策略能走到更远的节点，距离很远的两个簇的中心更容易出现在DFS的游走序列里，因此更能捕捉全局结构信息；而BFS策略更多的是在节点周围游走，相聚很远的两个簇中心，即使结构相似，也不太可能频繁出现在BFS的序列里。那么<strong><em>为什么是BFS更能捕捉结构信息，DFS反而是捕捉同质信息</em></strong>？这个问题我查了很久也没有得到一个很有说服力的结论，可能最终还是要看实验结果。希望有经验的同学可以解惑。</p>
 <p><strong><em>P.S.</em></strong> 对deepWalk和node2vec的讲解，强推斯坦福大学CS224W课程(Machine Learning with Graph)中Graph Representation Learning这一节。<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=YrhBZUtgG4E&amp;t=2983s">课程链接点我</a>, <a target="_blank" rel="noopener" href="http://snap.stanford.edu/class/cs224w-2018/handouts/09-node2vec.pdf">slides点我</a>。</p>
 <hr>
 <p>deepWalk和node2vec是word2vec在图结构上的一种实现，它们给很多已经在工业界落地的应用模型提供了思路。有许多工业界模型都在它的基础上结合业务场景进行了改进，在实际应用上取得了不错的效果。</p>
