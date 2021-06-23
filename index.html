@@ -418,12 +418,9 @@ L = -log \frac {1} {1+e^{-u_o^T \cdot v_c}} - \sum_{k=1, w_k～P(w)}^K log \frac
 </ul>
 <h3 id="工业界应用-airbnb---real-time-personalization-using-embeddings-for-search-ranking-at-airbnb">工业界应用: Airbnb - Real-time Personalization using Embeddings for Search Ranking at Airbnb</h3>
 <p><a target="_blank" rel="noopener" href="https://www.kdd.org/kdd2018/accepted-papers/view/real-time-personalization-using-embeddings-for-search-ranking-at-airbnb">论文原文</a></p>
-<p>Airbnb的这篇论文获得了KDD’ 2018 best paper，是word2vec结合业务场景改进的一次成功实践。它的模型简单不花哨，但工程性极强 ，很好地融入了平台自身的业务特点，并有很多模型在工业界实践的trick，也取得了很好的落地效果，值得仔细阅读和思考。</p>
+<p>Airbnb的这篇论文获得了KDD’ 2018 best paper，是word2vec结合业务场景改进的一次成功实践。它的模型简单不花哨，但工程性极强 ，融入了平台自身的业务特点，也取得了很好的落地效果，值得仔细阅读和思考。</p>
 <p>Airbnb是一个民宿平台，同时对房东和租客开放。房东可以在平台上发布房源信息，租客通过搜索选取自己心仪的房源(<strong><em>list</em></strong>)进行预定。同时，房东也可以决定是否接受租客的预定。Airbnb的目标在于，如何利用几种平台上有效的用户和租客行为<strong>点击</strong>(click)，<strong>预定</strong>(booking)，<strong>拒绝预定</strong>(reject)，学习到有效的embedding，从而在搜索中<strong>实时</strong>向用户推荐更符合他们<strong>偏好</strong>（preference）的房源信息。</p>
 <p>Airbnb把用户偏好分为了<strong>短期兴趣</strong>(short-term interest)和<strong>长期兴趣</strong>(long-term interest)。短期兴趣捕捉用户实时搜索浏览的房源特征，长期兴趣则更多从用户的预定历史中挖掘更普遍的兴趣偏好，例如一个当前在浏览巴黎房源信息的租客，他过去在洛杉矶预定的房源特征同样可以提供一种偏好信息(cross-market similarities)。</p>
-<!-- 其中，短期兴趣为实时采集一个固定时间窗口内用户点击list的序列(click session)，论文中设定的时间窗口为30min。
-Airbnb通过click session生成了list sequences，包含了用户短期内对于list的偏好信息。在训练过程中，Airbnb结合自身业务场景进行了：
- -->
 <h4 id="短期兴趣">短期兴趣</h4>
 <p>在word2vec的部分我们说过，将其应用到其他场景的一个关键就是如何生成有效的“上下文信息”。Airbnb结合自身业务场景的embedding策略可总结为以下三点：</p>
 <ul>
@@ -532,10 +529,13 @@ $$ -->
 <!-- question: metapath真的可以包含异构图的关系信息吗？ -->
 <hr>
 <h3 id="动态图嵌入">动态图嵌入</h3>
-<p>值得一提的是，虽然上述方法的有效性已经得到了大量学术实验的验证，但在实际应用中，仍然有关键的一点是我们关注的，那就是“<em>如果有新加入的节点，删除的节点，新加入的边等问题要怎么处理呢？</em>”这一<strong>动态性图嵌入</strong>(<strong>Dynamic Network Embedding</strong>)的问题。在微信支付团队的一篇十分精彩的<a href="">博客</a>里，提到了他们对于embedding更新的解决思路，即通过时序信息将节点“短期波动与长期稳定的行为解耦”，在下一个时间窗口计算与交互节点的embedding信号直接进行增量更新。</p>
-<p>在另一篇论文<a href="">Dynamic Network Embedding - An Extended Approach for Skip-gram based Network Emebdding</a>中提出了另一种解决方案。文中对图嵌入方法常用的目标函数进行了数学上的分解(<em>decomposable objective</em>)，使原本的目标函数可以更新局部节点，而不是更新全部。接下来，作者又计算出了每次图结构发生变化时被影响最大的是哪些节点，以便有针对性地进行更新。修改过的目标函数可以很快计算出新加入的节点的representation，又可以对影响最大的节点进行局部更新。</p>
-<h2 id="结语">结语</h2>
-<p>metapath作为一种先验知识，可以很好地指导embedding的训练过程。然而，无论是随机游走，还是metapath指导下的随机游走，展开的序列信息已经一定程度上失去了图数据本身的结构信息。那么，有没有一种方式可以直接在图的拓扑结构上聚合特征，而不是先把二维结构展开成一维序列？这种方式和Graph Embedding相比又有什么优缺点呢？下一篇会介绍基于<strong>图神经网络</strong>(<strong>Graph Neural Network</strong>)的图嵌入方法。</p>
+<p>值得一提的是，虽然上述方法的有效性已经得到了大量学术实验的验证，但在实际应用中，仍然有关键的一点是我们关注的，那就是“<em>如果有新加入的节点，删除的节点，新加入的边等问题要怎么处理呢？</em>”这一<strong>动态性图嵌入</strong>(<strong>Dynamic Network Embedding</strong>)的问题。在xx团队的一篇十分精彩的<a href="">博客</a>里，提到了在支付的场景下，需要对用户embedding进行增量更新。他们的解决思路是，针对发生变化的子图部分进行随机游走，生成新的游走序列来表征图中的局部更新信息，从而以这较小的代价来更新模型。然而，首先，我们很难圈定节点更新时的影响范围；第二，局部更新总会促成全局更新，我们很难找到一个确切的时间节点对模型进行全量更新。第三，在业务应用中对embedding的要求更高，要求更新快速有效，同时具备高稳定性。针对这些问题，xx团队的思路是，可以通过时序信息将用户节点的“短期波动与长期稳定行为解耦”，在下一个时间窗口通过用户相对静止的embedding与交互节点的embedding信号直接进行更新。这是站在时序的角度，从不同时间节点图的特征中剥离出了稳定信息和波动信息，从而更有针对性地进行embedding的增量更新。</p>
+<p>另一篇论文<a target="_blank" rel="noopener" href="https://www.ijcai.org/Proceedings/2018/0288.pdf">Dynamic Network Embedding - An Extended Approach for Skip-gram based Network Emebdding</a>中提出了另一种解决方案。文中对图嵌入方法常用的目标函数进行了数学上的分解(<em>decomposable objective</em>)，使原本的目标函数可以更新局部节点，而不是更新全部。接下来，作者又计算出了每次图结构发生变化时被影响最大的是哪些节点，以便有针对性地进行更新。分解过的目标函数可以很快计算出新加入的节点的representation，又可以对影响最大的节点进行局部更新。</p>
+<h3 id="结语">结语</h3>
+<p>metapath作为一种先验知识，可以很好地指导embedding的训练过程。然而，无论是顶点的随机游走，还是metapath指导下的随机游走，其训练都是基于word2vec，对于序列中的节点只有同一时间窗口的共现概念，不会考虑其顺序信息，因此不会再考虑节点之间是一阶邻居还是二阶邻居。可以说，展开的序列信息已经一定程度上失去了图数据本身的结构信息。那么，有没有一种方式可以直接在图的拓扑结构上聚合特征，而不是先把二维结构展开成一维序列？这种方式和Graph Embedding相比又有什么优缺点呢？下一篇会介绍基于<strong>图神经网络</strong>(<strong>Graph Neural Network</strong>)的图嵌入方法。</p>
+<!-- 2017年，Kipf和Welling在第一代基于xx的GCN[]()、第二代基于xx的GCN[]()的基础上，提出了第三代GCN--xx。相比如第二代GCN，这篇论文中xx，GCN也因此而大火。
+
+论文原文的数学部分确实晦涩难懂。我学术水平尚浅，有关谱聚类、傅立叶变换无法做到深入浅出的解释。我们只站在宏观的角度来看一下GCN的思想： -->
 
           
         
