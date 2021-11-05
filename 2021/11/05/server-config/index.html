@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="coding,ML," />
+  <meta name="keywords" content="Hexo, NexT" />
 
 
 
@@ -79,18 +79,16 @@
 
 
 
-<meta name="description" content="SVM ref">
+<meta name="description" content="Server Connection Generate private-public key pairs: 1ssh-keygen -t rsa -b 4096 -f ~&#x2F;.ssh&#x2F;new_rsa -C &quot;triton key for jamie&quot; Copy public key to server 1ssh-copy-id -i ~&#x2F;.ssh&amp;#x">
 <meta property="og:type" content="article">
-<meta property="og:title" content="SVM">
-<meta property="og:url" content="http://yoursite.com/2020/09/16/SVM/index.html">
+<meta property="og:title" content="server-config">
+<meta property="og:url" content="http://yoursite.com/2021/11/05/server-config/index.html">
 <meta property="og:site_name" content="Air can sing">
-<meta property="og:description" content="SVM ref">
+<meta property="og:description" content="Server Connection Generate private-public key pairs: 1ssh-keygen -t rsa -b 4096 -f ~&#x2F;.ssh&#x2F;new_rsa -C &quot;triton key for jamie&quot; Copy public key to server 1ssh-copy-id -i ~&#x2F;.ssh&amp;#x">
 <meta property="og:locale">
-<meta property="article:published_time" content="2020-09-16T02:25:46.000Z">
-<meta property="article:modified_time" content="2020-09-16T08:27:25.575Z">
+<meta property="article:published_time" content="2021-11-05T21:13:43.000Z">
+<meta property="article:modified_time" content="2021-11-05T21:22:28.020Z">
 <meta property="article:author" content="风鸣北川_rigel">
-<meta property="article:tag" content="coding">
-<meta property="article:tag" content="ML">
 <meta name="twitter:card" content="summary">
 
 
@@ -121,13 +119,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2020/09/16/SVM/"/>
+  <link rel="canonical" href="http://yoursite.com/2021/11/05/server-config/"/>
 
 
 
 
 
-  <title>SVM | Air can sing</title>
+  <title>server-config | Air can sing</title>
   
 
 
@@ -264,7 +262,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/09/16/SVM/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/11/05/server-config/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="">
@@ -281,7 +279,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">SVM</h1>
+          <h1 class="post-title" itemprop="name headline">server-config</h1>
         
 
         <div class="post-meta">
@@ -293,8 +291,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-09-16T05:25:46+03:00">
-                2020-09-16
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-11-05T23:13:43+02:00">
+                2021-11-05
               </time>
             
 
@@ -303,39 +301,6 @@
             
           </span>
 
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/coding/" itemprop="url" rel="index">
-                    <span itemprop="name">coding</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/coding/machine-learning/" itemprop="url" rel="index">
-                    <span itemprop="name">machine learning</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
           
 
           
@@ -364,8 +329,26 @@
       
 
       
-        <h3 id="svm">SVM</h3>
-<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/31886934">ref</a></p>
+        <h1 id="server-connection">Server Connection</h1>
+<h2 id="generate-private-public-key-pairs">Generate private-public key pairs:</h2>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -b 4096 -f ~&#x2F;.ssh&#x2F;new_rsa -C &quot;triton key for jamie&quot;</span><br></pre></td></tr></table></figure>
+<h2 id="copy-public-key-to-server">Copy public key to server</h2>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-copy-id -i ~&#x2F;.ssh&#x2F;new_rsa.pub name@server.addr</span><br></pre></td></tr></table></figure>
+<h2 id="login-with-ssh-key-avoid-typing-pwd-every-time">Login with SSH key (avoid typing pwd every time)</h2>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-add ~&#x2F;.ssh&#x2F;new_rsa</span><br></pre></td></tr></table></figure>
+<h2 id="modify-config-file-for-more-convenient-jumping">Modify config file for more convenient jumping</h2>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim ~&#x2F;.ssh&#x2F;config</span><br></pre></td></tr></table></figure>
+<p>add the followings:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># cluster name</span><br><span class="line">Host xxx</span><br><span class="line">    User LOGIN_NAME</span><br><span class="line">    Hostname server.addr</span><br></pre></td></tr></table></figure>
+<h1 id="environment">Environment</h1>
+<h2 id="install-conda">Install conda</h2>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget https:&#x2F;&#x2F;repo.anaconda.com&#x2F;archive&#x2F;Anaconda3-2021.05-Linux-x86_64.sh</span><br><span class="line">bash Anaconda3-2021.05-Linux-x86_64.sh</span><br></pre></td></tr></table></figure>
+<h2 id="modify-bash">Modify bash</h2>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim ~&#x2F;.bashrc</span><br></pre></td></tr></table></figure>
+<p>Add the followings:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export PATH&#x3D;$PATH:anaconda_install_path</span><br></pre></td></tr></table></figure>
+<p>run:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">source ~&#x2F;.bashrc</span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -381,14 +364,6 @@
 
     <footer class="post-footer">
       
-        <div class="post-tags">
-          
-            <a href="/tags/coding/" rel="tag"># coding</a>
-          
-            <a href="/tags/ML/" rel="tag"># ML</a>
-          
-        </div>
-      
 
       
       
@@ -398,8 +373,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2020/08/26/recordings/" rel="next" title="recordings">
-                <i class="fa fa-chevron-left"></i> recordings
+              <a href="/2021/06/21/graph-embedding-0/" rel="next" title="graph_embedding">
+                <i class="fa fa-chevron-left"></i> graph_embedding
               </a>
             
           </div>
@@ -407,10 +382,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2020/10/27/anacoda-tutorial/" rel="prev" title="anacoda_tutorial">
-                anacoda_tutorial <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -556,7 +527,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#svm"><span class="nav-number">1.</span> <span class="nav-text">SVM</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#server-connection"><span class="nav-number">1.</span> <span class="nav-text">Server Connection</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#generate-private-public-key-pairs"><span class="nav-number">1.1.</span> <span class="nav-text">Generate private-public key pairs:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#copy-public-key-to-server"><span class="nav-number">1.2.</span> <span class="nav-text">Copy public key to server</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#login-with-ssh-key-avoid-typing-pwd-every-time"><span class="nav-number">1.3.</span> <span class="nav-text">Login with SSH key (avoid typing pwd every time)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#modify-config-file-for-more-convenient-jumping"><span class="nav-number">1.4.</span> <span class="nav-text">Modify config file for more convenient jumping</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#environment"><span class="nav-number">2.</span> <span class="nav-text">Environment</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#install-conda"><span class="nav-number">2.1.</span> <span class="nav-text">Install conda</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#modify-bash"><span class="nav-number">2.2.</span> <span class="nav-text">Modify bash</span></a></li></ol></li></ol></div>
             
 
           </div>

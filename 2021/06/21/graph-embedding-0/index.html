@@ -100,8 +100,8 @@
 <meta property="og:image" content="http://yoursite.com/2021/06/21/graph-embedding-0/academic_net.png">
 <meta property="og:image" content="http://yoursite.com/2021/06/21/graph-embedding-0/hete_skip_gram.png">
 <meta property="og:image" content="http://yoursite.com/2021/06/21/graph-embedding-0/hin2vec.png">
-<meta property="article:published_time" content="2021-06-21T03:40:01.000Z">
-<meta property="article:modified_time" content="2021-06-23T11:12:28.803Z">
+<meta property="article:published_time" content="2021-06-21T08:40:01.000Z">
+<meta property="article:modified_time" content="2021-06-24T02:42:07.389Z">
 <meta property="article:author" content="风鸣北川_rigel">
 <meta property="article:tag" content="coding">
 <meta property="article:tag" content="DL">
@@ -309,7 +309,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-06-21T11:40:01+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-06-21T11:40:01+03:00">
                 2021-06-21
               </time>
             
@@ -544,7 +544,7 @@ $$ -->
 <!-- question: metapath真的可以包含异构图的关系信息吗？ -->
 <hr>
 <h3 id="动态图嵌入">动态图嵌入</h3>
-<p>值得一提的是，虽然上述方法的有效性已经得到了大量学术实验的验证，但在实际应用中，仍然有关键的一点是我们关注的，那就是“<em>如果有新加入的节点，删除的节点，新加入的边等问题要怎么处理呢？</em>”这一<strong>动态性图嵌入</strong>(<strong>Dynamic Network Embedding</strong>)的问题。在xx团队的一篇十分精彩的<a href="">博客</a>里，提到了在支付的场景下，需要对用户embedding进行增量更新。他们的解决思路是，针对发生变化的子图部分进行随机游走，生成新的游走序列来表征图中的局部更新信息，从而以这较小的代价来更新模型。然而，首先，我们很难圈定节点更新时的影响范围；第二，局部更新总会促成全局更新，我们很难找到一个确切的时间节点对模型进行全量更新。第三，在业务应用中对embedding的要求更高，要求更新快速有效，同时具备高稳定性。针对这些问题，xx团队的思路是，可以通过时序信息将用户节点的“短期波动与长期稳定行为解耦”，在下一个时间窗口通过用户相对静止的embedding与交互节点的embedding信号直接进行更新。这是站在时序的角度，从不同时间节点图的特征中剥离出了稳定信息和波动信息，从而更有针对性地进行embedding的增量更新。</p>
+<p>值得一提的是，虽然上述方法的有效性已经得到了大量学术实验的验证，但在实际应用中，仍然有关键的一点是我们关注的，那就是“<em>如果有新加入的节点，删除的节点，新加入的边等问题要怎么处理呢？</em>”这一<strong>动态性图嵌入</strong>(<strong>Dynamic Network Embedding</strong>)的问题。在xx团队的一篇十分精彩的<a href="">博客</a>里，提到了在支付的场景下，需要对用户embedding进行增量更新。他们的解决思路是，针对发生变化的子图部分进行随机游走，生成新的游走序列来表征图中的局部更新信息，从而以这较小的代价来更新模型。然而，首先，我们很难圈定节点更新时的影响范围；第二，局部更新总会促成全局更新，我们很难找到一个确切的时间节点对模型进行全量更新；第三，在业务应用中对embedding的要求更高，要求更新快速有效，同时具备高稳定性。针对这些问题，xx团队的思路是，可以通过时序信息将用户节点的“短期波动与长期稳定行为解耦”，在下一个时间窗口通过用户相对静止的embedding与交互节点的embedding信号直接进行更新。这是站在时序的角度，从不同时间节点图的特征中剥离出了稳定信息和波动信息，从而更有针对性地进行embedding的增量更新。</p>
 <p>另一篇论文<a target="_blank" rel="noopener" href="https://www.ijcai.org/Proceedings/2018/0288.pdf">Dynamic Network Embedding - An Extended Approach for Skip-gram based Network Emebdding</a>中提出了另一种解决方案。文中对图嵌入方法常用的目标函数进行了数学上的分解(<em>decomposable objective</em>)，使原本的目标函数可以更新局部节点，而不是更新全部。接下来，作者又计算出了每次图结构发生变化时被影响最大的是哪些节点，以便有针对性地进行更新。分解过的目标函数可以很快计算出新加入的节点的representation，又可以对影响最大的节点进行局部更新。</p>
 <h3 id="结语">结语</h3>
 <p>metapath作为一种先验知识，可以很好地指导embedding的训练过程。然而，无论是顶点的随机游走，还是metapath指导下的随机游走，其训练都是基于word2vec，对于序列中的节点只有同一时间窗口的共现概念，不会考虑其顺序信息，因此不会再考虑节点之间是一阶邻居还是二阶邻居。可以说，展开的序列信息已经一定程度上失去了图数据本身的结构信息。那么，有没有一种方式可以直接在图的拓扑结构上聚合特征，而不是先把二维结构展开成一维序列？这种方式和Graph Embedding相比又有什么优缺点呢？下一篇会介绍基于<strong>图神经网络</strong>(<strong>Graph Neural Network</strong>)的图嵌入方法。</p>
@@ -594,6 +594,10 @@ $$ -->
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/11/05/server-config/" rel="prev" title="server-config">
+                server-config <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -674,7 +678,7 @@ $$ -->
               
                 <a href="/archives/%7C%7Carchive">
               
-                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-count">25</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

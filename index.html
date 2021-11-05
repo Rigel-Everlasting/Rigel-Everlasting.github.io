@@ -261,6 +261,145 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/11/05/server-config/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/lukeandartoo.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Air can sing">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2021/11/05/server-config/" itemprop="url">server-config</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-11-05T23:13:43+02:00">
+                2021-11-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="server-connection">Server Connection</h1>
+<h2 id="generate-private-public-key-pairs">Generate private-public key pairs:</h2>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -b 4096 -f ~&#x2F;.ssh&#x2F;new_rsa -C &quot;triton key for jamie&quot;</span><br></pre></td></tr></table></figure>
+<h2 id="copy-public-key-to-server">Copy public key to server</h2>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-copy-id -i ~&#x2F;.ssh&#x2F;new_rsa.pub name@server.addr</span><br></pre></td></tr></table></figure>
+<h2 id="login-with-ssh-key-avoid-typing-pwd-every-time">Login with SSH key (avoid typing pwd every time)</h2>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-add ~&#x2F;.ssh&#x2F;new_rsa</span><br></pre></td></tr></table></figure>
+<h2 id="modify-config-file-for-more-convenient-jumping">Modify config file for more convenient jumping</h2>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim ~&#x2F;.ssh&#x2F;config</span><br></pre></td></tr></table></figure>
+<p>add the followings:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># cluster name</span><br><span class="line">Host xxx</span><br><span class="line">    User LOGIN_NAME</span><br><span class="line">    Hostname server.addr</span><br></pre></td></tr></table></figure>
+<h1 id="environment">Environment</h1>
+<h2 id="install-conda">Install conda</h2>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget https:&#x2F;&#x2F;repo.anaconda.com&#x2F;archive&#x2F;Anaconda3-2021.05-Linux-x86_64.sh</span><br><span class="line">bash Anaconda3-2021.05-Linux-x86_64.sh</span><br></pre></td></tr></table></figure>
+<h2 id="modify-bash">Modify bash</h2>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim ~&#x2F;.bashrc</span><br></pre></td></tr></table></figure>
+<p>Add the followings:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export PATH&#x3D;$PATH:anaconda_install_path</span><br></pre></td></tr></table></figure>
+<p>run:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">source ~&#x2F;.bashrc</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/06/21/graph-embedding-0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -292,7 +431,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-06-21T11:40:01+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-06-21T11:40:01+03:00">
                 2021-06-21
               </time>
             
@@ -529,7 +668,7 @@ $$ -->
 <!-- question: metapath真的可以包含异构图的关系信息吗？ -->
 <hr>
 <h3 id="动态图嵌入">动态图嵌入</h3>
-<p>值得一提的是，虽然上述方法的有效性已经得到了大量学术实验的验证，但在实际应用中，仍然有关键的一点是我们关注的，那就是“<em>如果有新加入的节点，删除的节点，新加入的边等问题要怎么处理呢？</em>”这一<strong>动态性图嵌入</strong>(<strong>Dynamic Network Embedding</strong>)的问题。在xx团队的一篇十分精彩的<a href="">博客</a>里，提到了在支付的场景下，需要对用户embedding进行增量更新。他们的解决思路是，针对发生变化的子图部分进行随机游走，生成新的游走序列来表征图中的局部更新信息，从而以这较小的代价来更新模型。然而，首先，我们很难圈定节点更新时的影响范围；第二，局部更新总会促成全局更新，我们很难找到一个确切的时间节点对模型进行全量更新。第三，在业务应用中对embedding的要求更高，要求更新快速有效，同时具备高稳定性。针对这些问题，xx团队的思路是，可以通过时序信息将用户节点的“短期波动与长期稳定行为解耦”，在下一个时间窗口通过用户相对静止的embedding与交互节点的embedding信号直接进行更新。这是站在时序的角度，从不同时间节点图的特征中剥离出了稳定信息和波动信息，从而更有针对性地进行embedding的增量更新。</p>
+<p>值得一提的是，虽然上述方法的有效性已经得到了大量学术实验的验证，但在实际应用中，仍然有关键的一点是我们关注的，那就是“<em>如果有新加入的节点，删除的节点，新加入的边等问题要怎么处理呢？</em>”这一<strong>动态性图嵌入</strong>(<strong>Dynamic Network Embedding</strong>)的问题。在xx团队的一篇十分精彩的<a href="">博客</a>里，提到了在支付的场景下，需要对用户embedding进行增量更新。他们的解决思路是，针对发生变化的子图部分进行随机游走，生成新的游走序列来表征图中的局部更新信息，从而以这较小的代价来更新模型。然而，首先，我们很难圈定节点更新时的影响范围；第二，局部更新总会促成全局更新，我们很难找到一个确切的时间节点对模型进行全量更新；第三，在业务应用中对embedding的要求更高，要求更新快速有效，同时具备高稳定性。针对这些问题，xx团队的思路是，可以通过时序信息将用户节点的“短期波动与长期稳定行为解耦”，在下一个时间窗口通过用户相对静止的embedding与交互节点的embedding信号直接进行更新。这是站在时序的角度，从不同时间节点图的特征中剥离出了稳定信息和波动信息，从而更有针对性地进行embedding的增量更新。</p>
 <p>另一篇论文<a target="_blank" rel="noopener" href="https://www.ijcai.org/Proceedings/2018/0288.pdf">Dynamic Network Embedding - An Extended Approach for Skip-gram based Network Emebdding</a>中提出了另一种解决方案。文中对图嵌入方法常用的目标函数进行了数学上的分解(<em>decomposable objective</em>)，使原本的目标函数可以更新局部节点，而不是更新全部。接下来，作者又计算出了每次图结构发生变化时被影响最大的是哪些节点，以便有针对性地进行更新。分解过的目标函数可以很快计算出新加入的节点的representation，又可以对影响最大的节点进行局部更新。</p>
 <h3 id="结语">结语</h3>
 <p>metapath作为一种先验知识，可以很好地指导embedding的训练过程。然而，无论是顶点的随机游走，还是metapath指导下的随机游走，其训练都是基于word2vec，对于序列中的节点只有同一时间窗口的共现概念，不会考虑其顺序信息，因此不会再考虑节点之间是一阶邻居还是二阶邻居。可以说，展开的序列信息已经一定程度上失去了图数据本身的结构信息。那么，有没有一种方式可以直接在图的拓扑结构上聚合特征，而不是先把二维结构展开成一维序列？这种方式和Graph Embedding相比又有什么优缺点呢？下一篇会介绍基于<strong>图神经网络</strong>(<strong>Graph Neural Network</strong>)的图嵌入方法。</p>
@@ -615,7 +754,7 @@ $$ -->
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-06-16T18:31:37+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-06-16T13:31:37+03:00">
                 2021-06-16
               </time>
             
@@ -934,7 +1073,7 @@ $$ -->
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-05-14T15:40:26+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-05-14T10:40:26+03:00">
                 2021-05-14
               </time>
             
@@ -1279,7 +1418,7 @@ $$ -->
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-05-02T22:22:01+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-05-02T17:22:01+03:00">
                 2021-05-02
               </time>
             
@@ -1438,7 +1577,7 @@ $$ -->
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-04-14T13:16:15+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-04-14T08:16:15+03:00">
                 2021-04-14
               </time>
             
@@ -1586,7 +1725,7 @@ $$ -->
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-04-04T19:34:59+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-04-04T14:34:59+03:00">
                 2021-04-04
               </time>
             
@@ -1753,7 +1892,7 @@ $$ -->
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-03-30T17:14:37+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-03-30T12:14:37+03:00">
                 2021-03-30
               </time>
             
@@ -1950,7 +2089,7 @@ WHAT is the connection between the papers you are discussing? -->
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-03-29T21:20:14+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-03-29T16:20:14+03:00">
                 2021-03-29
               </time>
             
@@ -2121,7 +2260,7 @@ WHAT is the connection between the papers you are discussing? -->
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-02-04T09:25:22+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-02-04T03:25:22+02:00">
                 2021-02-04
               </time>
             
@@ -2242,165 +2381,6 @@ WHAT is the connection between the papers you are discussing? -->
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/10/27/anacoda-tutorial/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/lukeandartoo.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Air can sing">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2020/10/27/anacoda-tutorial/" itemprop="url">anacoda_tutorial</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-10-27T12:41:16+08:00">
-                2020-10-27
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/coding/" itemprop="url" rel="index">
-                    <span itemprop="name">coding</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/coding/%E4%B8%80%E4%BA%9B%E8%B8%A9%E8%BF%87%E7%9A%84%E5%9D%91/" itemprop="url" rel="index">
-                    <span itemprop="name">一些踩过的坑</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p align="right">
-<font color="grey"> <i>——since 2020.10.27</i> </font>
-</p>
-<hr>
-<h2 id="一些常用的命令">一些常用的命令</h2>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">activate  # 切换到base环境 # 可能有点问题？</span><br><span class="line"></span><br><span class="line">conda deactivate  # 切换到base环境</span><br><span class="line">source deactivate # 切换到base环境</span><br><span class="line"></span><br><span class="line">activate xxx # 切换到自定义环境， xxx为环境名字</span><br><span class="line"></span><br><span class="line">conda create -n xxx python&#x3D;3 &#x2F;&#x2F; 创建一个名为xxx的环境并指定python版本为3(的最新版本)</span><br><span class="line"></span><br><span class="line">conda env list &#x2F;&#x2F; 列出conda管理的所有环境</span><br><span class="line"></span><br><span class="line">conda list &#x2F;&#x2F; 列出当前环境的所有包</span><br><span class="line"></span><br><span class="line">conda install requests 安装requests包</span><br><span class="line"></span><br><span class="line">conda remove requests 卸载requets包</span><br><span class="line"></span><br><span class="line">conda remove -n learn --all &#x2F;&#x2F; 删除learn环境及下属所有包</span><br><span class="line"></span><br><span class="line">conda update requests 更新requests包</span><br><span class="line"></span><br><span class="line">conda env export &gt; environment.yaml &#x2F;&#x2F; 导出当前环境的包信息</span><br><span class="line"></span><br><span class="line">conda env create -f environment.yaml &#x2F;&#x2F; 用配置文件创建新的虚拟环境</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/eaee1fadc1e9">reference</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2455,7 +2435,7 @@ WHAT is the connection between the papers you are discussing? -->
               
                 <a href="/archives/%7C%7Carchive">
               
-                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-count">25</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
