@@ -980,31 +980,19 @@ argmax_{\theta} \sum_{(l, c)\in D_p} log \frac {1}{1+e^{-\mathbf{v}^{&#39;}_l\ma
 
       
         
-          
-            <p align="right">
+          <p align="right">
 <font color="grey"> <i>——2021.4.4</i> </font>
 </p>
 <hr>
 <h3 id="motivation">Motivation</h3>
 <p>This paper proposes an efficient way to learn much more representative embeddings in collaborative filtering. The traditional matrix factorization way is not sufficient to aggregate collaborative signal, which is the high-order connectivity, in the user-item interaction network. As a result, the embeddings could not capture enough information for ranking.</p>
-<h3 id="introduction">Introduction</h3>
-<p>This paper utilizes graph neural network with multiple embeddings layers to capture high-order connectivity relations, with also a prediction layer to aggregate the refined embeddings and output the affinity score of a user-item pair. The proposed model, named NGCF, uses the layer-wise propagation rule through multiple embeddings layers and uses the gradient of pair-wise BPR loss function to update the weights matrix.</p>
-<h3 id="contributions">Contributions</h3>
-<h4 id="first-contribution">First contribution</h4>
-<p>This paper demonstrates the importance of high-order connectivity in embedding function of CF model.</p>
-<h4 id="second-contribution">Second contribution</h4>
-<p>It proposes NGCF model, a recommendation system based on graph neural network, to efficiently encode the collaborative signal in the form of high-order connectivity.</p>
-<h4 id="third-contribution">Third contribution</h4>
-<p>It evaluates and compares the performance of NGCF and different kinds of state-of-art models for recommendation system on three big real-world datasets, and also shows us the process for parameters tuning.</p>
-<h3 id="solution">Solution</h3>
-<p>It uses the layer-wise propagation rule through multiple embeddings layers and uses the gradient of pair-wise BPR loss function to update the weights matrix.</p>
-<h3 id="critique">Critique</h3>
-<h4 id="strength-1">Strength 1</h4>
-<p>The GNN based model can well capture the high-order connectivity through multiple embedding layers propagation.</p>
-<h4 id="strength-2">Strength 2</h4>
-<p>In every embedding layer, NGCF obtains the current output embedding through message construction and message aggregation. First, like GCN, the message construction calculation in each layer is based on the normalized Laplacian matrix, which can well distribute the contribution of each nodes in the neighbourhood according to their respective degree. Second, unlike GCN, the embedding layer also encodes the interaction between e_i and e_u through pair-wise product of these two vectors. Third, unlike GCN, the activation function in message aggregation is LeakyReLU instead of ReLu, due to LeakyReLU's ability to encode both positive and small negative signals. Finally, unlike GCN, the normalized Laplacian matrix does not have self-connections. This is because in the message aggregation process, it has already aggregate the message from user to user.</p>
-
-          
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2021/04/04/Neural-Graph-CF/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1856,7 +1844,7 @@ argmax_{\theta} \sum_{(l, c)\in D_p} log \frac {1}{1+e^{-\mathbf{v}^{&#39;}_l\ma
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/06/05/mac%E4%B8%8BAnaconda-jupyterNotebook-pyspark%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/06/03/%E4%B9%A6%E5%8D%95-20200603/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="">
@@ -1875,7 +1863,7 @@ argmax_{\theta} \sum_{(l, c)\in D_p} log \frac {1}{1+e^{-\mathbf{v}^{&#39;}_l\ma
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2020/06/05/mac%E4%B8%8BAnaconda-jupyterNotebook-pyspark%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/" itemprop="url">mac下Anaconda+jupyterNotebook+pyspark环境配置</a></h1>
+                <a class="post-title-link" href="/2020/06/03/%E4%B9%A6%E5%8D%95-20200603/" itemprop="url">书单-20200603</a></h1>
         
 
         <div class="post-meta">
@@ -1887,8 +1875,8 @@ argmax_{\theta} \sum_{(l, c)\in D_p} log \frac {1}{1+e^{-\mathbf{v}^{&#39;}_l\ma
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-06-05T12:32:12+03:00">
-                2020-06-05
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-06-03T22:03:59+03:00">
+                2020-06-03
               </time>
             
 
@@ -1910,19 +1898,8 @@ argmax_{\theta} \sum_{(l, c)\in D_p} log \frac {1}{1+e^{-\mathbf{v}^{&#39;}_l\ma
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/coding/" itemprop="url" rel="index">
-                    <span itemprop="name">coding</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/coding/%E4%B8%80%E4%BA%9B%E8%B8%A9%E8%BF%87%E7%9A%84%E5%9D%91/" itemprop="url" rel="index">
-                    <span itemprop="name">一些踩过的坑</span>
+                  <a href="/categories/%E8%8C%B6%E6%A0%91%E4%B8%98%E9%99%B5/" itemprop="url" rel="index">
+                    <span itemprop="name">茶树丘陵</span>
                   </a>
                 </span>
 
@@ -1959,15 +1936,23 @@ argmax_{\theta} \sum_{(l, c)\in D_p} log \frac {1}{1+e^{-\mathbf{v}^{&#39;}_l\ma
 
       
         
-          
-            <p align="right">
-<font color="grey"> <i>——写于 2020.3.31</i> </font>
+          <p align="right">
+<font color="grey"> <i>——写于 2020.6.3 22:05</i> </font>
 </p>
 <hr>
-<h2 id="安装">安装</h2>
-<p>直接下载就好了（</p>
-
-          
+<h3 id="杀死一只知更鸟">《杀死一只知更鸟》</h3>
+<blockquote><p><font color="grey"> “人当生而平等。” </font></p>
+</blockquote>
+<p><br></p>
+<p><i>score: 5/5</i></p>
+<p>这是一本主题为种族歧视的书，比较有特点的是，叙述者是主角阿蒂克斯的女儿斯库特。它以一个孩子为第一人称讲述了在南北战争后数年，种族歧视依然根深蒂固的美国南部，一个白人律师阿蒂克斯为一位被诬陷的黑人辩诉的故事。</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2020/06/03/%E4%B9%A6%E5%8D%95-20200603/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -2055,7 +2040,7 @@ argmax_{\theta} \sum_{(l, c)\in D_p} log \frac {1}{1+e^{-\mathbf{v}^{&#39;}_l\ma
               
                 <a href="/archives/%7C%7Carchive">
               
-                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-count">15</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2077,7 +2062,7 @@ argmax_{\theta} \sum_{(l, c)\in D_p} log \frac {1}{1+e^{-\mathbf{v}^{&#39;}_l\ma
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-count">14</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
