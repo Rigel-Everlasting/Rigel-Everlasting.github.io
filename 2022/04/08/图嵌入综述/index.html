@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="coding,DL,graph_embedding," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="——2021.6.21    概述与基础 图结构(Graph)广泛存在于现实各种应用场景中。比如社交媒体，用户之间的关注关系可以构成一个庞大的社交图网络；又比如推荐系统，用户对商品的购买、浏览和评分等行为可以抽象成用户和商品的交互图。然而，现实中的图结构大多都很复杂。一个复杂的图网络中可能包含十亿个节点、千万条边和上十万个簇，且不同的边可能代表着节点之间不同的关系。因此，如何有效地对图结构信息">
+<meta property="og:type" content="article">
+<meta property="og:title" content="图嵌入综述">
+<meta property="og:url" content="http://yoursite.com/2022/04/08/%E5%9B%BE%E5%B5%8C%E5%85%A5%E7%BB%BC%E8%BF%B0/index.html">
+<meta property="og:site_name" content="Air can sing">
+<meta property="og:description" content="——2021.6.21    概述与基础 图结构(Graph)广泛存在于现实各种应用场景中。比如社交媒体，用户之间的关注关系可以构成一个庞大的社交图网络；又比如推荐系统，用户对商品的购买、浏览和评分等行为可以抽象成用户和商品的交互图。然而，现实中的图结构大多都很复杂。一个复杂的图网络中可能包含十亿个节点、千万条边和上十万个簇，且不同的边可能代表着节点之间不同的关系。因此，如何有效地对图结构信息">
+<meta property="og:locale">
+<meta property="og:image" content="http://yoursite.com/2022/04/08/%E5%9B%BE%E5%B5%8C%E5%85%A5%E7%BB%BC%E8%BF%B0/graph-embedding/graph_embedding1.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/08/%E5%9B%BE%E5%B5%8C%E5%85%A5%E7%BB%BC%E8%BF%B0/graph-embedding/word2vec_case.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/08/%E5%9B%BE%E5%B5%8C%E5%85%A5%E7%BB%BC%E8%BF%B0/graph-embedding/skipgram.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/08/%E5%9B%BE%E5%B5%8C%E5%85%A5%E7%BB%BC%E8%BF%B0/graph-embedding/item2vec.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/08/%E5%9B%BE%E5%B5%8C%E5%85%A5%E7%BB%BC%E8%BF%B0/graph-embedding/item2vec_exp.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/08/%E5%9B%BE%E5%B5%8C%E5%85%A5%E7%BB%BC%E8%BF%B0/graph-embedding/aribnb_listing.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/08/%E5%9B%BE%E5%B5%8C%E5%85%A5%E7%BB%BC%E8%BF%B0/graph-embedding/airbnb_ann.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/08/%E5%9B%BE%E5%B5%8C%E5%85%A5%E7%BB%BC%E8%BF%B0/graph-embedding/airbnb_reject.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/08/%E5%9B%BE%E5%B5%8C%E5%85%A5%E7%BB%BC%E8%BF%B0/graph-embedding/dw_frm.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/08/%E5%9B%BE%E5%B5%8C%E5%85%A5%E7%BB%BC%E8%BF%B0/graph-embedding/eges_si.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/08/%E5%9B%BE%E5%B5%8C%E5%85%A5%E7%BB%BC%E8%BF%B0/graph-embedding/eges_result.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/08/%E5%9B%BE%E5%B5%8C%E5%85%A5%E7%BB%BC%E8%BF%B0/graph-embedding/node2vec_case.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/08/%E5%9B%BE%E5%B5%8C%E5%85%A5%E7%BB%BC%E8%BF%B0/graph-embedding/node2vec_brw.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/08/%E5%9B%BE%E5%B5%8C%E5%85%A5%E7%BB%BC%E8%BF%B0/graph-embedding/node2vec_vis.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/08/%E5%9B%BE%E5%B5%8C%E5%85%A5%E7%BB%BC%E8%BF%B0/graph-embedding/LINE.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/08/%E5%9B%BE%E5%B5%8C%E5%85%A5%E7%BB%BC%E8%BF%B0/graph-embedding/line_exp.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/08/%E5%9B%BE%E5%B5%8C%E5%85%A5%E7%BB%BC%E8%BF%B0/graph-embedding/academic_net.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/08/%E5%9B%BE%E5%B5%8C%E5%85%A5%E7%BB%BC%E8%BF%B0/graph-embedding/metapath2vec++.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/08/%E5%9B%BE%E5%B5%8C%E5%85%A5%E7%BB%BC%E8%BF%B0/graph-embedding/hin2vec.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/08/%E5%9B%BE%E5%B5%8C%E5%85%A5%E7%BB%BC%E8%BF%B0/graph-embedding/hin2vec_author.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/08/%E5%9B%BE%E5%B5%8C%E5%85%A5%E7%BB%BC%E8%BF%B0/graph-embedding/metagraph.png">
+<meta property="article:published_time" content="2022-04-07T21:00:43.000Z">
+<meta property="article:modified_time" content="2022-04-07T21:02:53.278Z">
+<meta property="article:author" content="风鸣北川_rigel">
+<meta property="article:tag" content="coding">
+<meta property="article:tag" content="DL">
+<meta property="article:tag" content="graph_embedding">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2022/04/08/%E5%9B%BE%E5%B5%8C%E5%85%A5%E7%BB%BC%E8%BF%B0/graph-embedding/graph_embedding1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2022/04/08/图嵌入综述/"/>
+
+
+
+
+
+  <title>图嵌入综述 | Air can sing</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Air can sing</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            日程表
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/04/08/%E5%9B%BE%E5%B5%8C%E5%85%A5%E7%BB%BC%E8%BF%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/lukeandartoo.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Air can sing">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">图嵌入综述</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-04-08T00:00:43+03:00">
+                2022-04-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/paper-reviews/" itemprop="url" rel="index">
+                    <span itemprop="name">paper_reviews</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p align="right">
+<font color="grey"> <i>——2021.6.21</i> </font>
+</p>
+<hr>
+<h1 id="概述与基础">概述与基础</h1>
+<p>图结构(Graph)广泛存在于现实各种应用场景中。比如社交媒体，用户之间的关注关系可以构成一个庞大的社交图网络；又比如推荐系统，用户对商品的购买、浏览和评分等行为可以抽象成用户和商品的交互图。然而，现实中的图结构大多都很复杂。一个复杂的图网络中可能包含十亿个节点、千万条边和上十万个簇，且不同的边可能代表着节点之间不同的关系。因此，如何有效地对图结构信息进行建模是学术界和工业界持续关注的焦点。</p>
+<p>近年兴起的图嵌入(Graph Embedding)方法，为图结构的建模提供了很好的解决思路，并在工业界被广泛的应用。嵌入(Embedding)的思想是：把图中的节点或者边嵌入到一个低维的向量空间中，且节点或边在该低维空间的关系能比较完整地保留原图的结构信息（图1）。换而言之，图嵌入的过程等价于对图中节点或边进行降维表示学习的过程。</p>
+<figure>
+<img src="./graph-embedding/graph_embedding1.png" alt="" /><figcaption>graph_embedding1</figcaption>
+</figure>
+<center>
+图1 图嵌入过程示例
+</center>
+<p>本文介绍了常见的Graph Embedding算法及其基本原理，另外还会对Graph Embedding在工业界实际业务场景中的落地情况进行简单地介绍和总结。</p>
+<h2 id="word2vec1">Word2vec[1]</h2>
+<p>说到Graph Embedding，就不得不从Word2vec算法进行切入。2013年，Google的Mikilov等大神们提出的Word2vec算法，正式为我们开启了“万物皆可embedding”的时代。Word2vec最早应用在自然语言处理领域（NLP）。大神们认为：同一语义上下文的单词之间存在天然的语义关系。例如：如果把“<strong>拜仁赢得欧冠冠军。</strong>”这句话看作是同一个语义上下文，“拜仁”这个词与“赢得”，“欧冠”和“冠军”等单词有比较强的语义关系。为了捕捉这一语义关系，Word2vec利用同一上下文的单词来学习各自的词向量表示（Word Embedding）。</p>
+<figure>
+<img src="./graph-embedding/word2vec_case.png" alt="" /><figcaption>word2vec_case</figcaption>
+</figure>
+<center>
+图2 Word2vec滑动窗口示例
+</center>
+<p>具体地，Word2vec利用语义窗口来捕捉每个句子中的语义上下文，并通过对语义窗口进行滑动，学习每一个句子序列中不同语义上下文窗口中的单词embedding。还是以句子“拜仁赢得欧冠冠军。”为例，如图2，假设滑动窗口的长度为1，当“赢得”这个词位于滑动窗口的中心时，那么“拜仁”，和“欧冠”这两个词就是“赢得”的上下文。因此，我们可以把“赢得”定义为<strong>中心词</strong>(Center Word)，把“拜仁”和“欧冠”这两个上下文词语定义为<strong>背景词</strong>(Context Word)。在Word2vec中，每个词语都关联着两个词向量，分别为<strong>中心词向量</strong>和<strong>背景词向量</strong>，取决于当前时刻该词语的角色。为了学习每个单词的中心词向量和背景词向量，Word2vec提出了两种模型，分别是以中心词预测背景词的Skip-gram模型，和以背景词去预测中心词的C-bow模型。由于它们的模型结构正好相反且前者是目前被使用更多的模型，本文将以Skip-gram为例提供关于Word2vec的进一步解释。</p>
+<h3 id="skip-gram">Skip-gram</h3>
+<p>在Skip-gram模型中，Word2vec旨在通过中心词来最大化背景词出现的联合概率分布，并以此对中心词和背景词进行有效的嵌入表示（例如，当前以“赢得”为中心词进行上下文预测时，单词“拜仁”和“欧冠”出现的概率需要是最大的）： <span class="math display">\[
+argmax  \frac{1}{T}\prod_{t=1}^T \prod_{-m\leq j\leq m, j\neq0}P(w^{t+j}_o|w^t_c) \tag{1}
+\]</span> 其中，<span class="math inline">\(T\)</span>代表词库大小，<span class="math inline">\(w_c\)</span>为中心词，<span class="math inline">\(w_o\)</span>为背景词，m为滑动窗口的大小。<span class="math inline">\(P(w^{t+j}_o|w^t_c)\)</span>为给定中心词<span class="math inline">\(w_c^t\)</span>下背景词<span class="math inline">\(w_o^{t+j}\)</span>出现的概率。那么问题来了，skip-gram是如何基于公式（1）这一目标函数分别学习中心词向量和背景词向量的呢？</p>
+<figure>
+<img src="./graph-embedding/skipgram.png" alt="" /><figcaption>skipgram</figcaption>
+</figure>
+<center>
+图3 Skip-gram模型图
+</center>
+<p>如图3所示，Skip-gram包含两个权重矩阵，分别为输入层到隐含层之间的<span class="math inline">\(\mathbf{W}\)</span>矩阵和隐含层到输出层之间的<span class="math inline">\(\mathbf{W}^{&#39;}\)</span>矩阵。前者表示中心词向量矩阵，后者表示背景词向量矩阵，分别代表着单词作为不同角色所关联的词向量。开始，Skip-gram模型的输入为中心词的one-hot向量表示，从输入层到隐含层的映射过程，实际上是以中心词<span class="math inline">\(w_c^t\)</span>的one-hot表示为索引，对矩阵<span class="math inline">\(\mathbf{W}\)</span>的行进行查表的过程，并得到中心词<span class="math inline">\(w_c^t\)</span>的词向量<span class="math inline">\(\mathbf{h}_i\)</span>。得到<span class="math inline">\(\mathbf{h}_i\)</span>后，为了预测概率<span class="math inline">\(P(w^{t+j}_o|w^t_c)\)</span>，skip-gram在隐含层用其与背景词矩阵<span class="math inline">\(\mathbf{W}^{&#39;}\)</span>相乘，并把最终的结果带入到Softmax函数中： <span class="math display">\[
+P(w_o|w_c) = \frac{exp(\mathbf{u}_o^{&#39;T}\mathbf{h}_i)}{\sum_{t\in T}exp(\mathbf{u}_t^{&#39;T}\mathbf{h}_i)} \tag{2}
+\]</span> 其中，向量<span class="math inline">\(\mathbf{u}_o^{&#39;}\)</span>表示背景词<span class="math inline">\(w_o^{t+j}\)</span>关联的背景词向量。从公式（2）中可以看到，在预测背景词<span class="math inline">\(w_o^{t+j}\)</span>的概率时，Skip-gram需要对整个词典中的所有单词进行遍历计算。因此，在给定中心词，预测每一个背景词出现的概率时，公式（2）的计算复杂度为<span class="math inline">\(O(T)\)</span>。现实中，词表的大小<span class="math inline">\(T\)</span>往往达到百万甚至千万级别，这样的计算代价显然是可接受的。为了解决单词预测复杂度的问题，Mikilov他们提出了两种优化训练的方法，分别是<strong>负采样</strong>（<strong>negative sampling</strong>）和<strong>层次softmax</strong>。因为负采样在实际情况中应用更广，本文在此只提供关于负采样的思想和原理。对后者感兴趣的童鞋欢迎去阅读Xing Rong的论文[2]或Youtube相关的视频资料[3]。</p>
+<h3 id="负采样">负采样</h3>
+<p>因为Word2vec最终的目的是获得所有词的向量表示，使得语义相似的词出现在嵌入空间中相近的位置。训练一个精确的背景词预测概率模型倒不是它的最终目标。所以在利用中心词预测背景词时，对所有单词的概率进行准确地预测是非必要的。换而言之，给定中心词<span class="math inline">\(w_c\)</span>，除了精确预测同一语义上下文中背景词<span class="math inline">\(w_o^{*}\)</span>的出现概率，Skip-gram无需精确预测语义窗口外所有单词的出现概率。因此，skip-gram在进行概率预测时，引入了<span class="math inline">\(K\)</span>个噪声词（负样本）。具体地，在给定当前中心词<span class="math inline">\(w_c\)</span>和其上下文时：</p>
+<ul>
+<li>背景词<span class="math inline">\(w_o\)</span>出现在当前训练窗口的概率为：<span class="math inline">\(P(D=1|w_c, w_o) = \sigma (u_o^T \cdot v_c)\)</span>。</li>
+<li>那么，第k个噪声词<span class="math inline">\(w_k\)</span>不在当前训练窗口的概率为：<span class="math inline">\(P(D=0|w_c, w_k) = 1 - \sigma (u_k^T \cdot v_c)\)</span>。</li>
+</ul>
+<p>其中，<span class="math inline">\(\mathbf{v}_c\)</span>，<span class="math inline">\(\mathbf{u}_o\)</span>和<span class="math inline">\(\mathbf{u}_k\)</span>分别表示中心词向量，背景词向量和噪声词的背景词向量，<span class="math inline">\(\sigma\)</span>表示激活函数<em>sigmoid</em>。负采样的目标是最大化背景词<span class="math inline">\(w_o\)</span>出现的概率<span class="math inline">\(P(D=1|w_c, w_o)\)</span>的同时最大化<span class="math inline">\(k\)</span>个噪声词<span class="math inline">\(w_k\)</span>不出现的概率<span class="math inline">\(P(D=0|w_c, w_k)\)</span>：</p>
+<p><span class="math display">\[
+P(w_o|w_c) = P(D=1|w_c, w_o) \prod_{k=1}^K P(D=0|w_c, w_k) \tag{3}
+\]</span></p>
+<p>在公式（3）中分别代入两个概率计算公式，转换后基于负采样的Skip-gram所使用的损失函数变为： <span class="math display">\[
+L = -log \frac {1} {1+e^{-\mathbf{u}_o^T \cdot \mathbf{v}_c}} - \sum_{k=1, w_k～P(w)}^K log \frac {1} {1+e^{\mathbf{u}_k^T \cdot \mathbf{v}_c}} \tag{4}
+\]</span></p>
+<p>其中，公式（4）的前半部分可以认为是损失函数中最大化中心词预测背景词的概率，后半部分可以认为是最小化中心词预测噪声词的概率。</p>
+<p>与传统的词袋模型（one-hot词编码）相比，通过Word2vec学习到的词向量在情感分析和语义建模等NLP相关任务上表现出了更优异的语义表达能力。同时，它也是众多Graph Embedding模型的重要组成部分。因此，本文的第一步需要为大家深入浅出一下Word2vec这一开山大作。</p>
+<h3 id="word2vec与矩阵分解">Word2vec与矩阵分解</h3>
+<p>一般地，我们都把Word2ve归类为基于神经网络的表示语言模型。实际上，Levy和Goldberg在其论文Neural Word Embedding as Implicit Matrix Factorization[4]中表示：基于负采样的Skip-gram模型等价于对由语料库构建的<strong>PMI矩阵</strong> <span class="math inline">\(\mathbf{P}\)</span> 进行隐式分解操作。公式（4）中向量<span class="math inline">\(\mathbf{u}_i\)</span>和<span class="math inline">\(\mathbf{v}_c\)</span>的点积 可以认为是在还原矩阵<span class="math inline">\(\mathbf{P}\)</span>中<span class="math inline">\(\mathbf{P}_{i,c}\)</span> 所对应的PMI值: <span class="math display">\[
+\mathbf{P}_{i, c}-\log k=\mathbf{u}_i^{T}\mathbf{v}_c \tag{5}
+\]</span></p>
+<p>其中，<span class="math inline">\(k\)</span>值为负采样的噪音词的个数。当<span class="math inline">\(k=1\)</span>时，公式（5）可以认为是对PMI矩阵直接进行矩阵分解。</p>
+<p>在面对大规模语料时，基于矩阵分解的操作是复杂且耗时的，尤其是当矩阵比较稠密的时候。相比之下，Word2vec中基于负采样方法的训练过程要简单和高效许多。这也是基于负采样的Skip-gram模型被普遍采用的原因之一。希望对Word2vec有更深入理解的同学，可以去拜读Levy他们的文章。</p>
+<h3 id="工业界应用item2vec5">工业界应用：Item2vec[5]</h3>
+<p>鉴于Word2vec在学习单词表示时所达到的优异表现，在2016年，微软尝试直接把它应用在推荐系统中基于商品协同过滤的场景下，旨在学到商品的向量表示，更好地建模商品和商品之间的关系。</p>
+<figure>
+<img src="./graph-embedding/item2vec.png" alt="" /><figcaption>item2vec</figcaption>
+</figure>
+<center>
+图4 出现在同一session中的游戏订单
+</center>
+<p>Item2vec认为，和自然语言中，同一语义上下文的单词语义相近类似。在用户每个Session中下单的所有商品都存在一定的关联（如图4中的Snowboard Party和Drag Racing 3D）。所以，它把同一个session中被下单的商品集（Item Set）看作同一个上下文，用该商品集中的商品去实现两两之间的预测，并采用基于负采样的Skip-gram模型学习每个商品的embedding。</p>
+<p>最终，通过实验对比，对Word2vec进行直接迁移的Item2vec模型所学习到的商品embedding的效果要优于推荐中传统的矩阵分解模型SVD。</p>
+<figure>
+<img src="./graph-embedding/item2vec_exp.png" alt="" /><figcaption>item2vec_exp</figcaption>
+</figure>
+<center>
+图5 Item2vec和SVD关于商品向量的t-SNE可视化结果
+</center>
+<h3 id="工业界应用airbnb-embedding6">工业界应用：Airbnb Embedding[6]</h3>
+<p>个人认为，Airbnb的这篇论文是Word2vec结合业务场景改进的一次成功实践，该工作也获得了KDD’ 2018 Applied Data Science Track的best paper。它的模型简单不花哨，但工程性极强，在Word2vec的基础上很好地融入了Airbnb自身的业务特点，并取得了很好的落地效果。强烈推荐大家有时间可以针对论文进行仔细阅读和思考，毕竟是出自Mihajlo的工作。</p>
+<p>Airbnb是一个民宿租赁的两方平台（Two-side Platform），同时对房东和租客开放。房东可以在平台上发布房源（listing）信息，租客根据需求搜索、浏览并选取自己心仪的房源进行预定。同时，房东也可以根据租客的信息决定是否接受租客的预定。此外，一处房源同一时间只能服务一个订单。此类两方平台的业务特色目前也广泛存在于现实世界中，例如：Airbnb，滴滴和Uber等。它们的业务性质与传统的电商和社交网络业务并不一致。在Airbnb平台，它们希望利用平台上有效的房东和租客行为（例如：点击浏览(click)，预定(booking)和拒绝预定(reject)），为房源学习到有效的embedding，从而在搜索或相似房源推荐中向用户推荐更符合他们偏好的房源信息。</p>
+<h4 id="房源listingembedding">房源（Listing）Embedding</h4>
+<p>为了将Word2vec应用在自己的业务场景，Mihajlo等人结合Airbnb自身业务场景提出的调整策略可总结为以下3点：</p>
+<ul>
+<li>同一个Session中的用户行为可以看做同一个序列，可类比成NLP中的一个句子。当一个用户的两次点击行为之间相距超过30分钟，则把新的点击行为当作另一个Session的开始；</li>
+<li>把Session中的booked listing当作是一个全局上下文（Global Context）。如图6所示，每次用central listing预测context listing时，也需要预测booked listing；</li>
+<li>在负采样时，不仅需要做基于全局的负采样，也要基于当前central listing的地理位置进行局部的负采样。</li>
+</ul>
+<figure>
+<img src="./graph-embedding/aribnb_listing.png" alt="" /><figcaption>aribnb_listing</figcaption>
+</figure>
+<center>
+图6 用于Listing Embedding学习的Skip-gram模型
+</center>
+<p>其中，策略二和三非常好地结合了Airbnb的业务需求。作为一个租赁平台，其主要目的是希望用户最终成功下单。策略二把每个Session中最终的booked listing作为global context，让它和同一Session中其他仅点击而未下单的listing尽可能的相似。在相似房源推荐的场景中，策略二希望为用户推荐他们可能下单的listing，而不仅仅是相似的listing。此外，Airbnb的用户在考虑下单时，更多是建基于特定的地域环境进行决策，例如：当用户在浏览北京朝阳区的房源时，大概率不会跳跃考虑深圳南山的房源。然而，Word2vec中提出的基于全局进行负采样的策略，无法保证同一地域中的listing embedding具有很好的区分性。所以，本文在全局负采样的基础上，提出了基于中心listing的地理位置进行局部地区的负采样策略。</p>
+<p>最终，Airbnb版本的Word2vec所设定的目标函数如下： <span class="math display">\[
+argmax_{\theta} \sum_{(l, c)\in D_p} log \frac {1}{1+e^{-\mathbf{v}^{&#39;}_l\mathbf{v}_c}} +
+\sum_{(n, c)\in D_n} log \frac {1}{1+e^{\mathbf{v}^{&#39;}_n\mathbf{v}_c}} +
+\color{red}{log \frac {1}{1+e^{-\mathbf{v}^{&#39;}_{b}\mathbf{v}_c}}} +
+\color{blue}{\sum_{(ln, c)\in D_{ln}} log \frac {1}{1+e^{\mathbf{v}^{&#39;}_{ln}\mathbf{v}_c}}} \tag{6}
+\]</span> 其中，<span class="math inline">\(D_p\)</span>为正样本集，<span class="math inline">\(\mathbf{v}_c\)</span>为当前的central isting，<span class="math inline">\(\mathbf{v}_l^{&#39;}\)</span>为同一个滑动窗口的context listing。<span class="math inline">\(D_n\)</span>为全局采样的负样本集，<span class="math inline">\(\mathbf{v}^{&#39;}_n\)</span>为全局负样本listing。<span class="math inline">\(\mathbf{v}_b\)</span>为booked listing，<span class="math inline">\(D_{ln}\)</span> 为局部采样的负样本集，<span class="math inline">\(\mathbf{v}^{&#39;}_{ln}\)</span>为局部负样本listing。对比公式（6）和公式（4），可以发现，两个公式主要区别是公式（6）为了策略二和三分别增加了红色部分的booked listing和蓝色部分的局部负采样。</p>
+<figure>
+<img src="./graph-embedding/airbnb_ann.png" alt="" /><figcaption>airbnb_ann</figcaption>
+</figure>
+<center>
+图7 利用Listing Embedding召回的相似Listings结果
+</center>
+<p>为了验证基于公式（6）学习到的embedding是否能成功捕捉listing之间的关联，论文中也提供了基于listing embedding做近邻召回的可视化结果。从图7我们可以看出，虽然Airbnb只利用了用户对listing的点击和订购的信息学习embedding。但是，基于左边listing召回的三个最相似的listing无论从房子结构还是租赁价格等方面，都和目标listing比较相似。此外，在相似房源推荐的场景中，该版本的listing embedding也比前一个版本的模型对线上点击率指标提高了<span class="math inline">\(20\%\)</span>。可以说，Airbnb embedding的提出，在他们业务平台上还是收到了非常不错的效果。</p>
+<h4 id="冷启动listing">冷启动Listing</h4>
+<p>在Airbnb，每天都有很多房主上传新的listing供租客挑选。新listing没有订购和浏览行为，无法学出它们的embedding，这是很多业务场景中常见的冷启动现象。为了解决这类新listing的冷启动问题，本文作者提出以新listing地理位置10英里以内的空间作为圈定条件，挑选出属性（价格，房型等）与当前listing最接近的三个listing。并通过对这三个listing的embedding取平均，得到新listing的embedding表示。通过这一操作，他们每天可以额外覆盖<span class="math inline">\(98\%\)</span>的新listing。</p>
+<h4 id="长期兴趣建模">长期兴趣建模</h4>
+<p>Listing embedding仅仅是基于用户的Session行为进行学习。Mihajlo等作者认为，用户在一个Session内的点击和订购行为仅能反映其短期兴趣，更多适用于相似房源推荐的应用场景。相比之下，对用户长期兴趣的建模可以更好地为用户提供个性化推荐。例如：同一个用户在伦敦和纽约的订单信息，可能有助于为他推荐洛杉矶的listing。基于这一概念，论文也尝试通过用户长期的订购序列对用户的长期兴趣进行建模。</p>
+<p>在处理用户长期订购行为的过程中，作者们发现用户的订购行为是非常稀疏的。例如：一些用户只有一到两次的订单信息，而大量房源被订购的次数可能都不超过<span class="math inline">\(5\)</span>次。这样的情况导致无论用户embedding还是listing embedding的学习效果都会非常不理想。此外，用户的订购兴趣也可能随着时间产生变化。比如：换工作后的用户，对房源的偏好也可能发生变化。为了解决这些问题，他们尝试学习更粗粒度的用户类别（User Type）和房源类型（Listing Type）的embedding。具体地，Airbnb把用户的基础信息（语言和简介等）和房源的基础信息（地段、价格和房型等）组合起来分别表示user_type和listing_type。例如：南山区100块一晚的单人房可能属于同一个listing_type，并共享同一个listing_type embedding。user_type的操作同理。为了把user_type embedding和listing_type embedding映射进同一个嵌入隐空间，给定一个长度为<span class="math inline">\(M\)</span>的用户的订购历史序列<span class="math inline">\(\mathcal{S}_b\)</span>，序列中每一项订单需要转换成在预定时的user_type和list_type的组合: <span class="math inline">\(\mathcal{S}_b = \{(u_{type_1}l_{type_1}), ..., (u_{type_M}l_{type_M})\}\)</span>。</p>
+<figure>
+<img src="./graph-embedding/airbnb_reject.png" alt="" /><figcaption>airbnb_reject</figcaption>
+</figure>
+<center>
+图8 User_type（蓝色）和Listing_type（橙色）Embedding学习的Skip-gram模型
+</center>
+<p>此外，在Airbnb，对于每一个订单，房东对租客也有选择的权利。比如，房东可能会认为没有详细用户信息的租客并不可靠，而拒绝此类租客的预定。为了防止给用户推荐他们可能被拒绝的listing，在对user_type和listing_type的embedding进行学习时，如图8所示，在利用central item对context user_type和context listing_type进行预测时，作者们把房东拒绝预定（reject）的行为也加入考虑。在学习user_type embedding时，reject的listing_type embedding将会作为负样本进行学习。同样地，在学习listing_type embedding时，被reject的user_type embedding将会被作为负样本。具体训练细节，敬请阅读Airbnb的论文。题外话：在搜推的场景下，Mihajlo他们发表的Airbnb三部曲的工作都非常推荐大家研读一下。</p>
+<h1 id="graph-embedding">Graph Embedding</h1>
+<p>上文花了大量的篇幅介绍Word2vec及其在工业界的一些应用，主要是因为Word2vec是近年Graph Embedding方法学习图节点嵌入表示的基础。但是，正如前文所述，无论是Word2vec还是Airbnb embedding等工业界应用，其使用场景均是利用滑动的上下文窗口在序列数据上捕捉节点之间的关系。图结构作为一种空间拓扑结构，应该如何把Word2vec这一高效的语言表示学习模型应用于图拓扑结构呢？</p>
+<h2 id="deepwalk7">DeepWalk[7]</h2>
+<p>Perozzi等人在KDD 2014提出的<strong>DeepWalk</strong>模型，是谈论Graph Embedding方法绕不过去的经典模型之一，它成功在Word2vec和Graph Embedding之间架起了连接的桥梁。为了学习图中每个节点的嵌入表示，DeepWalk提出了一种二阶段的图嵌入学习框架:</p>
+<ul>
+<li>阶段一：采用截断式随机游走（Truncated Random Walks）的方式把图中每个节点的局部拓扑结构转换成序列信息；</li>
+<li>阶段二：把Word2vec模型应用于阶段一产生的序列数据，学习序列中每个节点的embedding表示。</li>
+</ul>
+<figure>
+<img src="./graph-embedding/dw_frm.png" alt="" /><figcaption>dw_frm</figcaption>
+</figure>
+<center>
+图9 DeepWalk在电商推荐场景下的算法流程概览
+</center>
+<p>图9是DeepWalk模型在推荐场景下的应用。图9（a）显示的是不同用户在不同Session中的item点击序列。用Item2vec或Airbnb embedding的方法，Word2vec模型可以直接在这些序列信息上对节点进行嵌入学习。但图中用户的Session行为都偏短，会导致序列中item学习出来的embedding质量并不理想。DeepWalk会根据每个Session中item的共现信息和出现的次序，构建一个全局的item有向图（图9（b））。然后以每个item节点为起始节点，进行截断式随机游走产生新的item序列。从图9（c）中可以看出，因为随机游走对图结构的局部探索能力，我们可以得到一些原来并没有见过的item序列，例如：“ABE”序列。因此，后续的表示学习模型可以拥有更丰富的数据来学习每个节点的embedding。最后，通过随机游走生成的item序列都会被送入Skip-gram模型中进行节点的embedding学习。</p>
+<p>值得一提，随机游走不仅可以完成图结构到序列信息的转换，还可以并行地为每个节点生成序列信息，这为DeepWalk模型应用在大规模图结构上提供了可行性。我司Tesla平台的Angel团队就提供了DeepWalk模型的分布式实现版本，简单易用。DeepWalk这种二阶段的图嵌入学习框架，也被后续很多Graph Embedding方法所采用。所以，DeepWalk在学术界和工业界，都是一个很常见的Graph Embedding baseline。</p>
+<h3 id="工业界应用-eges8">工业界应用: EGES[8]</h3>
+<p>EGES是阿里巴巴和港科大发表在KDD‘18关于推荐召回的工作。细心的读者可能会发现，它和Airbnb的工作发表在同年同一个会议上，推荐领域几项经典的工作（MMoE等）都在同一年KDD出现，这一盛况也不是那么的常见，哈哈。</p>
+<p>EGES的作者们认为，传统的协同过滤模型只能建模商品之间表面的共现关系，而基于图结构的DeepWalk模型通过随机游走的模式，可以捕捉到商品之间的高维（High-order）相似性（图9）。所以，他们把DeepWalk应用在阿里的item embedding学习中，并把学习到的item embedding用在手淘推荐的召回阶段。但是，作为国内最大的电商平台，淘宝每天都有上千万新上架的商品，这些冷启动的商品并没有行为信息，从而导致原版的DeepWalk模型无法学到它们的embedding表示。为了解决冷启动的问题，他们尝试利用这些商品关联的类目、品牌等边信息（Side Information）。此外，他们也认为，在电商场景中，商品之间的关系和自然语言处理中单词之间的关系不完全相同。例如：同一个品牌的商品之间在向量空间中的位置应该接近。因此，他们在DeepWalk的基础上，提出了加入Side Information的Graph Embedding模型。这也是EGES（Enhanced Graph Embedding with Side Information）名字的由来。</p>
+<p>EGES的总体算法流程可以参见图9，和DeepWalk模型是基本一致的。但是为了在item embedding学习过程中加入和item关联的价格、品类和商店等边信息，EGES修改了DeepWalk在阶段二中Skip-gram模型的两个embedding权重矩阵<span class="math inline">\(\mathbf{W}\)</span>和<span class="math inline">\(\mathbf{W}^{&#39;}\)</span>（参见图3）。为了把边信息融入item embedding中，EGES中的embedding矩阵<span class="math inline">\(\mathbf{W}\)</span>（<span class="math inline">\(\mathbf{W}^{&#39;}\)</span>）不仅包括原生的item embedding矩阵<span class="math inline">\(\mathbf{W}^0\)</span>，还包括另外<span class="math inline">\(n\)</span>个边信息的embedding矩阵 <span class="math inline">\(\mathbf{W}^1, \mathbf{W}^2, ..., \mathbf{W}^n\)</span>。</p>
+<figure>
+<img src="./graph-embedding/eges_si.png" alt="" /><figcaption>eges_si</figcaption>
+</figure>
+<center>
+图10 item embedding和边信息embedding加权融合过程
+</center>
+<p>此外，作者们认为，不同的边信息对item表示的程度并不一样。例如：在Iphone等电子品类中，品牌属性可能更重要，但在帽衫等衣服品类中，可能价格属性更重要。所以，Iphone和帽衫所关联的side information的权重分布应该不一样。最终，如图10所示，EGES的Skip-gram模型中的embedding权重矩阵由包括原生item embedding矩阵在内的<span class="math inline">\(n+1\)</span>个embedding权重矩阵通过加权平均的方式求得： <span class="math display">\[
+\mathbf{w}_{i} = \sum_{j=0}^n\frac{ \mathrm{e}^{a^j_i}}{\sum_{j=0}^n \mathrm{e}^{a^j_i}}\mathbf{w}^j_i \tag{7}
+\]</span> 其中，<span class="math inline">\(\mathbf{w}_i\)</span>是最终Skip-gram权重矩阵<span class="math inline">\(\mathbf{W}\)</span>中关于item <span class="math inline">\(i\)</span>的embedding，<span class="math inline">\(\mathbf{w}^j_i\)</span>表示item <span class="math inline">\(i\)</span>关联的第<span class="math inline">\(j\)</span>个边信息的embedding。<span class="math inline">\(a^j_i\)</span>表示item <span class="math inline">\(i\)</span>对应第<span class="math inline">\(j\)</span>个边信息的重要程度，每个item i都会关联一个<span class="math inline">\(n+1\)</span>维的权重向量：<span class="math inline">\(\mathbf{a}_i = [a^0_i, a^1_i, ..., a^n_i]\)</span>，在模型学习的过程中，通过梯度回传的方式对它进行更新。通过这样的方式，向量<span class="math inline">\(\mathbf{w}_i\)</span>中不仅嵌入了用户的行为信息，而且也嵌入了和item <span class="math inline">\(i\)</span>相关联的一些边信息。</p>
+<p>EGES在构建冷启item的embedding时，由于冷启item没有训练好的原生item embedding和权重向量<span class="math inline">\(\mathbf{a}\)</span>。所以，简单地对<span class="math inline">\(n\)</span>个它关联的Side Information向量取平均得到它最终的embedding表示。</p>
+<figure>
+<img src="./graph-embedding/eges_result.png" alt="" /><figcaption>eges_result</figcaption>
+</figure>
+<center>
+图11 EGES在淘宝平台的实验结果
+</center>
+<p>虽然EGES只是对DeepWalk模型做了简单的修改，但是从图11中我们可以看出，加入边信息学习后的item embedding在冷启商品的召回结果和线上七天ab测试的CTR结果中，都取得了不错的效果。</p>
+<p>当然，发表于18年的EGES并不复杂，通过和DeepWalk的对比，可以发现它仅是结合业务对DeepWalk进行了有限的修改。那么，感兴趣的同学可以思考一下，EGES后续还有什么可以改进的地方呢？这几年一直深耕深度学习的各位可能第一时间就想到了Attention机制，包括作者们也在文章的future work中提到了关于Attention的尝试。但笔者认为，EGES可能早在Attention机制盛行之前就已经在阿里内部提出，所以文章中并没有做基于attention的尝试和对比。另外，虽然加入attention机制无疑可以减少模型需要训练的参数，同时为模型带来更多的灵活性，但是否也会使得模型计算变得更复杂反而降低了embedding的质量？另外，EGES把用户的Session行为根据序列关系转换成了有向图，有向图和无线图在item embedding学习上是否差别很大？毕竟在电商的推荐场景中，同一个Session内，用户购买商品的序列可能并不一定这么明显。</p>
+<p>最后，看点快报在18年也尝试在图文召回中利用EGES加入媒体、类别和tag等边信息来学习图文的embedding表示[9]，感兴趣的同学可以去阅读这篇KM。</p>
+<!-- ### 工业界应用: 腾讯新闻[10]
+
+DeepWalk在腾讯新闻的个性化推荐场景中也有被使用到。
+
+![tecent_news](./graph-embedding/tecent_news.png)
+
+<center>图12 腾讯新闻Graph Embedding建模过程</center>
+
+如图12所示，新闻的同事们提出的Graph Embeddnig的整体思路与DeepWalk类似，他们主要的改进工作体现在图构建阶段，希望在构建图阶段，通过改变节点之间边的权重来调整随机游走所得到的的序列结果，使得生成的训练节点序列更符合腾讯新闻的业务场景。在基于腾讯新闻的用户行为数据构建图的时候，新闻同事们提出了两点有意思的思考：
+
+1. Item的曝光信息极有可能影响item之间的共现，比如曝光更多的item往往更容易共现。因此，Item曝光信息也应该反映在图中item节点之间的边权重上；
+2. Item之间的推荐关系是有向的，新闻场景中可以在冷门内容后推荐相关的热门新闻，但是未必适合在热门新闻后推荐相关的冷门内容。
+
+基于这两个前提，新闻的同事提出了一种叫做ACF的算法计算图中节点之间的边权重。最终学习到的item embedding在视频召回中上线，并在点击vv和总vv上都取得了明显的提升。感兴趣的同学推荐阅读新闻同事输出的这篇从业务角度出发，非常实用和直接的关于DeepWalk的KM文章。 -->
+<h2 id="node2vec11">Node2vec[11]</h2>
+<p>Node2vec是图领域的男神Jure Leskovec课题组的工作。Jure在图表示领域做出了许多贡献，包括PinSage，GraphRNN和19年ICLR的“<strong>How Powerful Are Graph Neural Networks?</strong>”等经典工作。所以这篇Node2vec还是需要详细介绍一下。</p>
+<p>Node2vec的出发点在于，在现实世界的图结构中，节点间的相似性广泛地存在两种形态:</p>
+<ul>
+<li>一种是和同一社区（Community）内近邻节点之间的<strong>同质性</strong>（Homophily）；</li>
+<li>一种是和担任类似结构角色的节点之间的<strong>结构性</strong>（Structural Equivalence）。</li>
+</ul>
+<figure>
+<img src="./graph-embedding/node2vec_case.png" alt="" /><figcaption>node2vec_case</figcaption>
+</figure>
+<center>
+图13 Node2vec节点关系示例
+</center>
+<p>具有同质性相似的节点之间往往处在同一个小社区内，并且相互之间具有紧密的连接性。相比之下，具有结构性相似的节点之间并不一定是邻接节点，但他们处在图中类似的结构之中。如图13中，节点<span class="math inline">\(\rm u\)</span>和节点<span class="math inline">\(\rm s_1, \rm s_2\)</span>之间的相似性属于<strong>同质性</strong>，而节点<span class="math inline">\(\rm u\)</span>和节点<span class="math inline">\(\rm s_6\)</span>之间的相似性则属于<strong>结构性</strong>。这两种相似性分别需要用基于广度优先搜索（BFS）和基于深度优先搜索（DFS）的策略对图的局部结构进行探索。而DeepWalk所采用的随机游走策略更多是一种DFS的探索策略。为了完整地建模图中这两种相似性，Node2vec提出了一种有偏的随机游走（Biased Random Walk）策略。</p>
+<h3 id="有偏随机游走biased-random-walk">有偏随机游走（Biased Random Walk）</h3>
+<figure>
+<img src="./graph-embedding/node2vec_brw.png" alt="" /><figcaption>node2vec_brw</figcaption>
+</figure>
+<center>
+图14 Node2vec的有偏随机游走策略示例
+</center>
+<p>具体地，Node2vec在随机游走的过程中，分别利用了参数<span class="math inline">\(p\)</span>和<span class="math inline">\(q\)</span>来引导游走策略是倾向于BFS还是DFS： <span class="math display">\[
+a_{pq}(t,x)= \begin{cases}
+\frac{1}{p} &amp; if\ d_{tx} = 0 \\
+1 &amp; if\ d_{tx} = 1 \\
+\frac{1}{q} &amp; if\ d_{tx} = 2\\
+\end{cases} \tag{8}
+\]</span> 这里需要结合图14和公式（8）来理解Node2vec的游走策略，当游走采样从节点<span class="math inline">\(\rm t\)</span>走到节点<span class="math inline">\(\rm v\)</span>并需要决定下一跳节点时，会有三种情况：</p>
+<ol type="1">
+<li>返回节点<span class="math inline">\(\rm t\)</span>（<span class="math inline">\(d_{tx} = 0\)</span>）;</li>
+<li>走到节点<span class="math inline">\(\rm t\)</span>和节点<span class="math inline">\(\rm v\)</span>的共同邻居，例如节点<span class="math inline">\(\rm x_1\)</span>（<span class="math inline">\(d_{tx}=1\)</span>）；</li>
+<li>走到与节点<span class="math inline">\(\rm t\)</span>无关的节点<span class="math inline">\(v\)</span>的邻接节点，例如节点<span class="math inline">\(\rm x_3\)</span>或<span class="math inline">\(\rm x_2\)</span>（<span class="math inline">\(d_{tx}=2\)</span>）。</li>
+</ol>
+<p>至此，我们可以看出：<span class="math inline">\(\frac{1}{p}\)</span>控制着返回上一跳节点的概率。当<span class="math inline">\(p\)</span>取值小于<span class="math inline">\(1\)</span>时，随机游走生成的序列倾向于在同一节点附近徘徊，接近于BFS遍历。相比之下，<span class="math inline">\(\frac{1}{q}\)</span>控制着游走到更远节点的概率。当<span class="math inline">\(q\)</span>取值小于<span class="math inline">\(1\)</span>时，随机游走生成的序列倾向于向更远的结构进行探索，接近于DFS遍历。通过控制参数<span class="math inline">\(p\)</span>和<span class="math inline">\(q\)</span>的取值，可以让Node2vec在建模图结构时更倾向于同质性或者结构性。DeepWalk模型可以看做是当<span class="math inline">\(p\)</span>和<span class="math inline">\(q\)</span>的值都设置成<span class="math inline">\(1\)</span>的Node2vec模型。需要注意的是，当图为无权图时，节点的转移概率直接由<span class="math inline">\(a_{pq}(t,x)\)</span>决定。当图为有权图时，节点最终的转移概率为<span class="math inline">\(a_{pq}(t,x)\)</span>和边权重的乘积：<span class="math inline">\(\pi_{vx} = a_{pq}(t,x)w_{vx}\)</span>。</p>
+<p>基于每个节点完成有偏随机游走的序列采样后，Node2vec也采用基于负采样的Skip-gram模型对采样后的序列信息进行节点嵌入的学习。</p>
+<p>值得一提的是，到底是<strong>BFS更适合捕捉图的结构信息而DFS更能捕捉图的同质信息？</strong>还是<strong>BFS更适合捕捉图的同质信息而DFS更能捕捉图的结构信息？</strong>这个问题一直困扰了很多Node2vec的读者，包括广告界的知乎大V王喆大神，也曾混淆过这里的关系，并且专门写了一篇知乎博客对其进行解释[12]。所以这个问题笔者也想在这里和大家一起探讨一下。非常有趣的一点是，在文章的Introduction部分，作者们表达的信息倾向于BFS更适合捕捉图的同质信息而DFS则更适合结构信息，包括作者们提供的图解（图13）也让读论文的同学们有这样的理解。但是，从论文的方法部分开始，作者明确提出，BFS由于可以对微观视角（Microscopic View）的结构进行更清楚的探索，所以更能捕捉图的结构信息。相比之下，DFS则更可以在局部图中探索宏观视角（Marco-view）的信息，所以更能捕捉图在一个大社区下的节点之间的同质性信息。</p>
+<figure>
+<img src="./graph-embedding/node2vec_vis.png" alt="" /><figcaption>node2vec_vis</figcaption>
+</figure>
+<center>
+图15 基于DFS和BFS的聚类可视化结果
+</center>
+<p>图15中的可视化结果是作者对同一个图结构分别采用倾向于DFS的游走策略和倾向于BFS的游走策略学到的节点embedding的聚类结果。可以看到，DFS的结果使得在同一个社区内的节点都分在了相同颜色的簇。而BFS的聚类结果则让一些结构信息更类似的节点更容易被分在相同颜色的簇中，例如图15（b）中的蓝色节点。有趣的是，作者在文中对于这一结果最终也说道，不同的人对于这个可视化的聚类结果可能有不同的理解，但他们需要强调的其实是Node2vec模型可以通过设置不同的参数来捕捉图中两种不同的相似性特质（微笑脸）。</p>
+<p>笔者认为，可能一开始图13给了我们太深的印象，无形中也混淆了我们的理解。根据文章中的解释，无论是同质性还是结构性，更多都是站在同一个社区的角度进行捕捉。BFS更能捕捉的是同一个局部结构内，具有相似微观结构的节点之间的相似性。而DFS由于可以游走得更远，所以更能捕捉整个社区的宏观信息，从而学习到社区内不同节点之间的相似性。</p>
+<!-- 看点的内容投放组也尝试利用看点的数据在Tesla平台上利用Node2vec的BFS和DFS这两种策略进行验证。我们发现：通过BFS所学到的item embedding更容易让在同一个类目下的热门item更相似，比如：社会类的热门内容会召回同为社会类的热门内容。而通过DFS所学到的item embedding则会让同一个大类下的各类item都比较相似，比如：社会类的文章可能召回时事类和生活类的内容。 -->
+<p>无论怎么说，Node2vec提出的有偏随机游走策略确实让其在面对复杂图网络结构时，比起DeepWalk更能学习到节点的完整表示。毕竟出自大神组的工作，其在工业界也有不少应用。对Node2vec感兴趣的同学也可以去参考Jure Leskovec在Youtube的相关授课视频[13]。</p>
+<h3 id="工业界应用微信朋友圈广告14">工业界应用：微信朋友圈广告[14]</h3>
+<p>这项工作主要是应用在2016年微信朋友圈广告投放的场景中，当时微信团队需要基于广告主提供的种子用户做用户扩散，找到一批对目标广告可能感兴趣的潜在用户，并对它们进行朋友圈的曝光。在进行用户扩散的过程中，需要用到每个用户的embedding，对用户embedding的学习，微信的同事们选择采用Node2vec模型在微信用户的社交关系图上进行embedding学习。</p>
+<p>微信的同事们认为，在社交关系数据里面有两个核心的价值：</p>
+<ol type="1">
+<li>社交同质性：我和我的好友可能有相似的兴趣；</li>
+<li>社交影响力：我可能被我的某些好友与朋友圈广告的互动行为所影响。</li>
+</ol>
+<p>社交同质性和影响力分别对应了Node2vec里面的同质性和结构性角色这两种相似性，可以说Node2vec模型比较好地结合了当时微信朋友圈广告推送的业务场景。这一点也是笔者推荐这项工作的原因之一。在查找Node2vec在工业界应用的文献过程中，笔者发现很多工作对Node2vec的应用场景仅仅是因为它可以学到图节点的嵌入表示，并没有很好地把它的原理和自己的业务结合思考。换而言之，在同一个业务场景下，使用DeepWalk模型进行节点embedding学习也没有太大的区别。这类工作，可能并不具备Node2vec应用的代表性，所以在此处就不多加介绍了。另一点比较值得注意的是，貌似很多Node2vec的应用场景都在风控部门，例如斗鱼风控部门和微信运营利用Node2vec来挖掘黑产团伙[15]和反欺诈[26]等。这个现象也比较有意思，但因为公布的材料不多，就没做深入的研究。</p>
+<h2 id="line16">LINE[16]</h2>
+<p>发表于WWW’15的LINE也是Graph Embedding算法中非常重要的模型之一。把它放在Node2vec之后介绍，主要是因为与DeepWalk、Node2vec和EGES等二阶段图算法模型不同，LINE通过巧妙地构造目标函数，实现对大规模图网络的嵌入学习。LINE的作者认为，在对图中节点关系进行嵌入学习的过程中，需要同时建模两种节点之间的关系：</p>
+<ul>
+<li><strong>一阶亲密度</strong>（First-order Proximity）：代表着图中存在边连接的节点之间的关系；</li>
+<li><strong>二阶亲密度</strong>（Second-order Proximity）：代表着共享大部分邻居的节点之间的关系。</li>
+</ul>
+<figure>
+<img src="./graph-embedding/LINE.png" alt="" /><figcaption>LINE</figcaption>
+</figure>
+<center>
+图16 一阶亲密度和二阶亲密度示意图
+</center>
+<p>在图16中，节点<span class="math inline">\(6\)</span>和<span class="math inline">\(7\)</span>之间存在一阶亲密度，节点<span class="math inline">\(5\)</span>和<span class="math inline">\(6\)</span>之间存在二阶亲密度。作者认为，无论节点6和<span class="math inline">\(7\)</span>还是节点<span class="math inline">\(5\)</span>和<span class="math inline">\(6\)</span>都需要在嵌入空间中处于邻近的位置。为了说明两类关系的合理性，作者在论文中提出了两个比较形象的比喻：节点之间的一阶亲密度就像是朋友间的关系，他们之间可能有相似的兴趣。节点之间的二阶亲密度就像有着许多共同朋友的两个人，他们也很可能有相似的兴趣并最终成为朋友。</p>
+<h3 id="一阶亲密度建模">一阶亲密度建模</h3>
+<p>LINE通过最小化节点<span class="math inline">\(i\)</span>和节点<span class="math inline">\(j\)</span>之间的经验分布和联合分布之间的距离（KL-散度），实现对节点<span class="math inline">\(i\)</span>和<span class="math inline">\(j\)</span>之间的一阶亲密度建模： <span class="math display">\[
+O_1 = - \sum_{(i,j) \in E} w_{ij}\log p_1(v_i, v_j) \tag{9}
+\]</span> 其中，<span class="math inline">\(w_{ij}\)</span>表示节点<span class="math inline">\(i\)</span>和<span class="math inline">\(j\)</span>之间的边权重，<span class="math inline">\(p_1(v_i, v_j) = \frac{1}{1+e^{-\mathbf{\mu}_i^{T}\mathbf{\mu}_j}}\)</span>表示节点<span class="math inline">\(i\)</span>和<span class="math inline">\(j\)</span>的联合概率分布。需要注意的是，向量<span class="math inline">\(\mathbf{u}_{*}\)</span>来自同一套embedding矩阵。</p>
+<h3 id="二阶亲密度建模">二阶亲密度建模</h3>
+<p>在建模节点之间的二阶亲密度时，LINE没有采用游走的方式进行，而是提出了一个假设：“<strong>共享上下文（Context）的节点彼此相似</strong>”。这句话大家可能似曾相识，其实和Word2vec背后所设立的语义相似逻辑是一致的。因此，在建模节点之间的二阶亲密度时，LINE采用了与Word2vec相似的目标函数： <span class="math display">\[
+O_2 = - \sum_{(i,j) \in E} w_{ij}\log p_2(v_j|v_i) \tag{10}
+\]</span> 其中，<span class="math inline">\(p_2(v_j|v_i) = \frac{exp(\mathbf{q}_j^{&#39;T}\mathbf{q}_i)}{\sum_{k=0}^{|V|}exp(\mathbf{q}_k^{&#39;T}\mathbf{q}_i)}\)</span>表示基于节点<span class="math inline">\(i\)</span>预测节点<span class="math inline">\(j\)</span>的概率，<span class="math inline">\(\mathbf{q}_{*}\)</span>和<span class="math inline">\(\mathbf{q}^{&#39;}_{*}\)</span>分别表示“中心节点向量”和“上下文节点向量”。当LINE建模无权图的节点之间的二阶亲密度时（<span class="math inline">\(w_{ij}=1\)</span>），公式（10）其实等价于公式（1）。</p>
+<p>最终，LINE通过公式（9）和公式（10）对图进行分开建模，并把学习到的关于一阶亲密度的embedding <span class="math inline">\(\mathbf{u}_{*}\)</span>和二阶亲密度的embedding <span class="math inline">\(\mathbf{q}_*\)</span>进行简单的拼接，从而得到节点最终的embedding：<span class="math inline">\(\mathbf{h}_{*} = [\mathbf{u}_{*};\mathbf{q}_{*}]\)</span>。</p>
+<h3 id="新节点问题">新节点问题</h3>
+<p>处理大规模信息网络是LINE（Large-scale Information Network Embedding）一直的卖点之一。在处理大规模图网络常见的新节点embedding缺失的问题，LINE提出在不改变原有节点embedding的情况下，通过新节点<span class="math inline">\(x\)</span>与其他原有节点之间的边权重<span class="math inline">\(w_{x*}\)</span>，结合目标函数<span class="math inline">\(O_1\)</span>和<span class="math inline">\(O_2\)</span>，通过梯度回传的方式逐渐训练新节点<span class="math inline">\(x\)</span>的embedding表示<span class="math inline">\(\mathbf{h}_{x}\)</span>。</p>
+<h3 id="实验对比">实验对比</h3>
+<figure>
+<img src="./graph-embedding/line_exp.png" alt="" /><figcaption>line_exp</figcaption>
+</figure>
+<center>
+图17 Line在维基百科上关于网页分类结果的对比
+</center>
+<p>笔者一直在说，LINE本身的二阶亲密度的建模方式其实等价于Word2vec的建模方式。从作者的实验中（图17）也可以看出，DeepWalk在分类的性能上其实和LINE(2nd)是差不多的。LINE的提升更多来自于在LINE(2nd)的基础上对LINE(1st)的拼接。而且，笔者个人认为，如果随机游走的次数足够多，无论在无向图还是有向图，DeepWalk都可以完整地建模到大于二阶邻居的关于每个节点的局部图结构，从而学到更有代表性的节点表示。也就是说，个人猜测通过足够的随机游走和精准的调参策略，大多数情况，DeepWalk模型应该是要优于LINE(2nd)的。我甚至非常好奇LINE(1st)+DeepWalk是否会达到比LINE(1st+2nd)更好地性能？以上观点仅代表个人猜想。但无论如何，在当时的时间节点，LINE提出在建模节点间的关系时，用边权重进行辅助指导还是非常直观和正确的思路。作者采用的一阶和二阶分开训练然后拼接的方式，也挺值得深思的。</p>
+<!-- ### 工业界应用：CDG信贷场景[17]
+
+在搜索LINE在工业界应用的过程中，有一个现象非常有意思。无论在KM亦或是在知乎等知识平台上搜索关键词“Graph Embedding”或“图嵌入”，只要是关于Graph Embedding相关技术的介绍或者综述的文章，5篇有4篇都会提到图嵌入的三大杀器：DeepWalk、Node2vec和LINE。但是，所有的文章都会提到“DeepWalk”和“Node2vec”。这个现象挺有意思的，至于是为啥笔者也解释不清楚。在查询LINE在工业界的应用时，由于LINE的设计初衷是对大规模图网络中的节点进行嵌入学习，所以更多的应用倒是关于LINE在工业界的分布式实现，而不是它在业务场景中的应用。唯二在KM上搜到的LINE的应用场景都是和金钱相关。
+
+一个是CDG的信贷风控团队认为在计算用户间资金关系链时，用户的一阶关系和二阶关系同样重要。这个出发点与LINE非常贴合，但通过对申请信贷的用户进行分析后发现，在该应用场景下，用户们来自全国各地，往往共同好友非常少，无法很好地建模用户之间的二阶亲密度。因此，通过LINE学出来的用户embedding在作为特征输入预测模型后，并没有获得太多收益。
+
+一个是微信支付团队在建模微信支付用户embedding时，尝试用LINE分别学习用户作为“收款方”和“付款方”时的embedding[18]。这里不得不再感慨一下微信的同事们对图算法的探索做得还是非常全面的，对于对图算法感兴趣的同学来说，微信团队关于图算法的KM文章都是非常宝贵和实用的学习资料。 -->
+<h2 id="metapath2vec19">Metapath2vec[19]</h2>
+<p>前文所介绍的方法，无论是二阶段图嵌入的鼻祖DeepWalk、结合BFS和DFS的Node2vec或者同时捕捉节点间一阶亲密度和二阶亲密度的LINE，更多专注于对图的局部结构信息进行探索。但多数情况，在现实世界的图网络中，节点之间不仅具有空间结构（structure）上的联系而且还具有语义（semantic）上的联系。</p>
+<figure>
+<img src="./graph-embedding/academic_net.png" alt="" /><figcaption>academic_net</figcaption>
+</figure>
+<center>
+图18 多语义学术图网络示例
+</center>
+<p>以图18(a)中的学术图网络为例，作者节点<span class="math inline">\(a_{1}\)</span>虽然和机构节点“MIT”以及论文节点<span class="math inline">\(p_{1}\)</span>都直接相连，但<span class="math inline">\(a_{1}\)</span>和“MIT”之间是<strong>隶属</strong>关系，而和<span class="math inline">\(p_{1}\)</span>之间是<strong>撰写论文</strong>的关系。同理，作为节点<span class="math inline">\(a_{1}\)</span>的二阶邻居，“<span class="math inline">\(a_{1}-p_{1}-\rm ACL\)</span>”表示作者<span class="math inline">\(a_{1}\)</span>在ACL上发表了论文<span class="math inline">\(p_1\)</span>。而“<span class="math inline">\(a_{1}-p_{1}-a_{2}\)</span>”和“<span class="math inline">\(a_{1}-\rm MIT-a_{2}\)</span>”则分别表示<span class="math inline">\(a_{2}\)</span>和<span class="math inline">\(a_{1}\)</span>是co-author，并且他们之间是同事的关系。因此，Metapath2vec的作者们认为，在对这类有多种节点以及节点之间存在多种关系的异构图（Heterogeneous Graph）进行图嵌入学习时，不仅需要建模节点的空间结构关系，还需要考虑节点之间的语义联系。为了同时建模异构图节点间的空间结构关系和语义关系，Metapath2vec的作者提出了一种基于元路径（Meta-path-based）的随机游走策略。</p>
+<h3 id="metapath2vec">metapath2vec</h3>
+<p>元路径（Meta-paths）在这里可以理解为预定义的异构图中包含的语义联系。例如图18（b）中的元路径“APA”代表co-author关系：表示两个作者（A）共同发表了论文（P）。同理，元路径“APVPA”表示两个作者（A）在同一个会议上（V）各自发表了论文（P）。结合元路径的随机游走策略可以保证在游走的过程中，同时考虑节点间的空间结构关系和语义关系。具体地，给定元路径<span class="math inline">\(\mathcal{P}\)</span>，metapath2vec在计算下一节点的转移概率的方式如下： <span class="math display">\[
+p(v^{i+1}|v^i_t, \mathcal{P})\begin{cases}
+\frac{1}{|N_{t+1}(v_{t}^i)|} &amp; (v^{i+1}, v^i)\in E,\phi(v^{i+1})=t+1 \\
+0 &amp; (v^{i+1}, v^i)\in E,\phi(v^{i+1})\neq t+1 \\
+0 &amp; (v^{i+1}, v^i)\notin E
+\end{cases} \tag{11}
+\]</span> 其中，<span class="math inline">\(v_{t}^i\)</span>表示当前<span class="math inline">\(\rm t\)</span>时刻所在节点<span class="math inline">\(v_t\)</span>且节点<span class="math inline">\(v_t\)</span>的类型属于<span class="math inline">\(\rm t\)</span>，<span class="math inline">\(|N_{t+1}(v_{t}^i)|\)</span>表示节点<span class="math inline">\(v_t^i\)</span>关于<span class="math inline">\(\rm t+1\)</span>类别节点的邻接节点（Neighbor Node）集合内的节点数量。以元路径“<span class="math inline">\(\mathcal{P} = \rm{APA}\)</span>”引导随机游走为例，序列的第一个节点<span class="math inline">\(v^0_A\)</span>需要为作者（A）类节点，假设选定图18中的<span class="math inline">\(a_2\)</span>节点作为起始节点，下一游走节点<span class="math inline">\(v^1\)</span>只能在<span class="math inline">\(a_2\)</span>的论文类（P）邻接节点中选择（即<span class="math inline">\(p_1\)</span>和<span class="math inline">\(p_2\)</span>）。此时，虽然机构（0）类节点MIT也是<span class="math inline">\(a_2\)</span>的邻接节点，但由于<span class="math inline">\(\phi(\rm MIT)\neq \rm P\)</span>，所以在进行关于<span class="math inline">\(v_P^{1}\)</span>采样时，MIT被采样到的概率为<span class="math inline">\(0\)</span>。假设第二个节点<span class="math inline">\(v_P^{1}\)</span>为论文节点<span class="math inline">\(p_2\)</span>，为了遵循元路径<span class="math inline">\(\mathcal{P}\)</span>的引导，下一游走节点<span class="math inline">\(v^2\)</span>只能在作者（A）类邻接节点中选择（<span class="math inline">\(a_2\)</span>，<span class="math inline">\(a_3\)</span>和<span class="math inline">\(a_4\)</span>）。</p>
+<p>通过预定义异构图网络中的语义联系作为元路径（例如：co-author关系“APA”或论文发表关系“APVPA”等），基于元路径的随机游走策略可以保证metapath2vec模型在生成节点序列信息时，可以同时建模节点之间的空间结构关系和语义关系。另外，在选定相关元路径后，例如“APA”，metapath2vec可以通过循环选定元路径的方式游走出预定长度的异构节点序列。假设游走长度为<span class="math inline">\(5\)</span>，则从作者（A）类节点开始游走的序列所遵循的模式为"APAPA"，这样的模式可以挖掘出论文作者之间的二阶甚至高阶的学术关系。例如，假设“Geoffrey Hinton”和“Yann LeCun”是co-author，且“Geoffrey Hinton”和“Yoshua Bengio”也是co-author，则“LeCun”和“Bengio”之间也可能存在某种学术联系。</p>
+<p>对每个节点完成基于元路径的随机游走的序列采样后，与其他二阶段图嵌入方法一样，metapath2vec也采用基于负采样的Skip-gram模型对序列信息进行节点嵌入的学习。</p>
+<h3 id="metapath2vec-1">metapath2vec++</h3>
+<p>虽然metapath2vec通过元路径引导随机游走的方式，限定了在序列游走的过程中下一节点的可选范围需要遵循预定义的元路径语义。但是，在节点的嵌入学习阶段，metapath2vec和其他二阶段图嵌入算法一样，采用了传统的基于负采样的Skip-gram模型。因此，在每次基于中心节点进行负采样时，负采样的节点范围是所有类型的节点而与中心节点的类型是无关的。Metapath2vec的作者们认为，这样不利于区分异构节点的嵌入表示。所以，他们在metapath的基础上，提出了新的负采样方式对异构节点序列进行学习，叫做metapath2vec++。</p>
+<p>具体地，在每次建模中心节点<span class="math inline">\(c\)</span>和上下文节点<span class="math inline">\(o\)</span>之间的关系时，metapath2vec++把负采样节点的范围限定在和当前上下文节点<span class="math inline">\(o\)</span>属于相同类型的节点。并因此把metapath2vec++的目标函数修改为： <span class="math display">\[
+L = -log \frac {1} {1+e^{-\mathbf{u}_o^T \cdot \mathbf{v}_c}} - \sum_{k=1, \color{red}{w_k～Type(o)}}^K log \frac {1} {1+e^{\mathbf{u}_k^T \cdot \mathbf{v}_c}} \tag{12}
+\]</span> 仔细对比公式（4）和公式（12）可以发现，metapath2vec++对传统基于负采样的Skip-gram模型的唯一改动在于负采样时只考虑与上下文节点<span class="math inline">\(o\)</span>同类型的其他节点（公式（12）的红色部分）。metapath2vec++的中心思想在于：<strong>用中心节点对上下文节点进行预测时，预测的范围不是全图中的所有节点，而是限定在与当前需要预测的上下文节点属于同一类别的节点范围内。</strong></p>
+<figure>
+<img src="./graph-embedding/metapath2vec++.png" alt="" /><figcaption>metapath2vec++</figcaption>
+</figure>
+<center>
+图19 metapath2vec和metapath2vec++关于学术图网络学习到的作者和会议embedding的可视化
+</center>
+<p>从图19中可以看出，虽然metapath2vec和metapath2vec++都学到了作者节点和会议节点之间的语义关系，例如：C.D. Manning和ACL。但是，我们可以看到，metapath2vec++不仅成功捕捉了不同类型节点之间的语义关系，同时可以比较清晰地区分会议节点和作者节点在嵌入空间中的关系。</p>
+<!-- ### 工业界应用: 微视召回[20]
+
+Metapath2vec被微视的同事用于学习用户（User）和视频（Item）的embedding学习，并应用在推荐召回阶段。
+
+![weishi](./graph-embedding/weishi.png)
+
+<center>图20 微视Metapath2vec应用流程</center>
+
+微视同事们认为，同一作者在同一类目下创作的视频之间具有较强的语义关联。同样地，消费了同一作者在同一类目下的视频的用户也应该有相似的兴趣。所以在推荐场景中的user节点和item节点的基础上，他们引入了由作者（Author）和二级类目（Cate2）拼接构成的AC节点，并设计了基于“User-Item-AC-Item-User”的元路径来引导随机游走策略在微视的用户行为异构图上进行序列生成。具体细节如图20所示，根据用户对视频的点击序列和视频与作者类目之间的关系，构建微视自己的“用户-视频-AC”异构图，并在构建好的异构图上基于“User-Item-AC-Item-User”的元路径进行随机游走。最终游走生成的序列采取Skip-gram进行训练。
+
+根据[10]中的描述，Metapath2vec使得微视关于视频召回业务在内容相关性指标上得到了一定的提升，不过AC节点的引入带来了过强的约束力也削弱了召回视频的多样性。为了解决这一问题，微视的同事们也做了相关的操作，感兴趣的同学推荐阅读这篇KM文章。最终，Metapath2vec模型在微视的召回业务中上线，且在人均时长和人均VV上都收获了不错的提升。
+
+笔者认为，微视召回的这项工作是关于Metapath2vec非常好的一个应用实例。微视同事们首先考虑到用户节点和视频节点的异质性。然后，通过拼接作者节点和二级类目节点很自然地引入了同作者在同类目下创作内容之间天然的语义联系。作者节点和二阶类目节点拼接的方式也比较有意思。所以，还是再次推荐微视同事们写的这篇KM文章，质量非常不错。微视推荐召回篇系列的内容都非常扎实，推荐相关的同学非常值得阅读。
+
+另外，看点投放团队近半年也一直在基于Metapath2vec对信息流中“用户”，“内容”和“作者”之间的关系进行探索，日后期待也能带来相关有深度的分析和业务结果分享给各位看官。 -->
+<h2 id="hin2vec21">HIN2Vec[21]</h2>
+<p>HIN2Vec和Metapath2vec同样发表于2017年，从它的标题“<strong>HIN2Vec: Explore Meta-paths in Heterogeneous InformationNetworks for Representation Learning</strong>”可以看出，HIN2Vec的中心思想也是通过元路径来指导异构图网络中节点的表示学习，旨在同时建模节点间的空间结构关系和语义结构关系。与Metapath2vec类似，HIN2Vec也采用二阶段学习的方式来学习节点表示和边表示：</p>
+<ol type="1">
+<li>训练数据准备阶段；</li>
+<li>表示学习阶段。</li>
+</ol>
+<h3 id="表示学习阶段">表示学习阶段</h3>
+<p>与DeepWalk，Metapath2vec等基于Skip-gram的二阶段学习模型不同，HIN2Vec在节点的表示学习阶段并没有采用基于负采样的Skip-gram模型，而是把节点和边的表示学习转换成了二分类任务。由于学习方式的不同，所以HIN2Vec在阶段一关于训练数据准备的方式也与之前介绍的二阶段图嵌入方法略有不同，所以这里先从阶段二切入介绍。</p>
+<figure>
+<img src="./graph-embedding/hin2vec.png" alt="" /><figcaption>hin2vec</figcaption>
+</figure>
+<center>
+图21 HIN2Vec的二分类神经网络模型示意图
+</center>
+<p>给定节点<span class="math inline">\(x, y\)</span>和一条特定的边关系<span class="math inline">\(r\)</span>，HIN2Vec提出了一个基于神经网络的二分类器模型（图21），其输出概率<span class="math inline">\(P(r|x,y)\)</span>用于判断边类型<span class="math inline">\(r\)</span>是否存在于节点<span class="math inline">\(x\)</span>和<span class="math inline">\(y\)</span>之间： <span class="math display">\[
+P(r|x,y)=\sigma（\sum \mathbf{W}^{&#39;}_{X}\mathbf{x} \odot \mathbf{W}^{&#39;}_{Y}\mathbf{y} \odot f_{01}(\mathbf{W}^{&#39;}_{R}\mathbf{r})) \tag{13}
+\]</span> 其中，向量<span class="math inline">\(\mathbf{x}，\mathbf{y}\)</span>和<span class="math inline">\(\mathbf{r}\)</span>分别表示节点x，y和边r的one-hot向量表示。矩阵<span class="math inline">\(\mathbf{W}^{&#39;}_{X}\)</span>和<span class="math inline">\(\mathbf{W}^{&#39;}_{Y}\)</span>表示两套节点向量。HIN2Vec在实验中共用了一套节点向量，所以公式（13）中的矩阵<span class="math inline">\(\mathbf{W}^{&#39;}_{X}\)</span>和<span class="math inline">\(\mathbf{W}^{&#39;}_{Y}\)</span>可以看作是同一套向量矩阵。<span class="math inline">\(\mathbf{W}^{&#39;}_{R}\)</span>表示边向量，函数<span class="math inline">\(f_{01}(*)\)</span>用于限制边向量的每一维取值在<span class="math inline">\(0\)</span>到<span class="math inline">\(1\)</span>之间。函数<span class="math inline">\(f_{01}(*)\)</span>使得边向量<span class="math inline">\(\mathbf{w}^{&#39;}_r\)</span>起到了门机制的作用，用于保量节点向量<span class="math inline">\(\mathbf{w}^{&#39;}_x\)</span>和<span class="math inline">\(\mathbf{w}^{&#39;}_y\)</span>中有价值的交互信息，用于最终的二分类判断。符号<span class="math inline">\(\odot\)</span>表示哈达玛积（Hadamard Product），<span class="math inline">\(\sigma(*)\)</span>表示激活函数，在HIN2Vec论文里可以取sigmoid函数或者Binary step函数。</p>
+<p>最终，给定<span class="math inline">\(D\)</span>个训练数据三元组<span class="math inline">\(&lt;x, y, r&gt;\)</span>，HIN2Vec采用交叉熵作为损失函数来优化节点和边的embedding表示： <span class="math display">\[
+L = -\frac{1}{D}\sum_{D}L(x, y, r)\log P(r|x,y)+[1-L(x, y, r)]\log [1-P(r|x,y)] \tag{14}
+\]</span> 其中，<span class="math inline">\(L(x,y,r)\)</span>为训练三元组<span class="math inline">\(&lt;x, y, r&gt;\)</span>的标签，如果节点<span class="math inline">\(x，y\)</span>之间存在边<span class="math inline">\(r\)</span>，则<span class="math inline">\(L(x,y,r) = 1\)</span>，反之则<span class="math inline">\(L(x,y,r) = 0\)</span>。</p>
+<h3 id="训练数据准备阶段">训练数据准备阶段</h3>
+<p>在数据准备阶段，HIN2Vec采用了随机游走的方式生成节点的随机序列。但与Metapath2vec基于元路径进行随机游走的方式不同，HIN2Vec采用的是原始的随机游走策略。然后根据随机游走所得到的序列内节点之间的关系，提取出对应的训练三元组<span class="math inline">\(&lt;x, y, r&gt;\)</span>。</p>
+<figure>
+<img src="./graph-embedding/hin2vec_author.png" alt="" /><figcaption>hin2vec_author</figcaption>
+</figure>
+<center>
+图22 作者-论文异构图
+</center>
+<p>假设基于图22的“作者-论文”异构图生成出序列“<span class="math inline">\(P_1-P_2-A_1-P_3-A_1\)</span>”（P表示论文，A表示作者），基于节点<span class="math inline">\(P_1\)</span>我们可以得到<span class="math inline">\(&lt;P_1,P_2, \rm{P-P}&gt;\)</span>和<span class="math inline">\(&lt;P_1, A_1, \rm{P-P-A}&gt;\)</span>三元组用于训练表示学习阶段的二分类神经网络模型。同理，针对节点<span class="math inline">\(P_2\)</span>，我们可以得到<span class="math inline">\(&lt;P_2,A_1, \rm{P-A}&gt;\)</span>和<span class="math inline">\(&lt;P_2,P_3,\rm{P-A-P}&gt;\)</span>三元组，以此类推。</p>
+<p>因为HIN2Vec的核心思想是通过训练二分类器的目标来达到对节点向量和边向量的学习。所以，除了通过随机游走生成正样本训练数据以外，二分类器在学习阶段同样需要负样本。HIN2Vec通过对已有的正样本三元组中的顶点元素采取基于同类别节点的随机替换的方式，构造不同的训练负样本。例如：对于正样本<span class="math inline">\(L(P_1,P_2, \rm{P-P})=1\)</span>，HIN2Vev在构造负样本时，把论文节点<span class="math inline">\(P_1\)</span>替换成论文节点<span class="math inline">\(P_4\)</span>得到负例<span class="math inline">\(L(P_4,P_2, \rm{P-P})=0\)</span>。构造好的训练样本将会在阶段二用于训练基于神经网络的二分类器。最终，训练好的二分类器中的<span class="math inline">\(\mathbf{W}^{&#39;}_{X}\)</span>矩阵和<span class="math inline">\(\mathbf{W}^{&#39;}_{R}\)</span>矩阵是HIN2Vec输出的节点向量和边向量。可以看出，HIN2Vec在数据准备阶段采取了与Metapat2vec相反的步骤，HIN2Vec是先随机游走获得节点的空间结构关系，然后在空间结构的基础上提取对应的语义关系。相比之下，Metapath2vec更多是通过预定义的语义关系引导空间结构上的游走策略。</p>
+<h2 id="基于metagraph的异构图建模22">基于Metagraph的异构图建模[22]</h2>
+<p>这篇工作是我司IEG同事联合SMU和微众一起提出的。与之前基于元路径（Meta-path）建模异构图节点间的语义关系不同，本文的作者们提出了一种称为元图（Meta-graph）的概念。并基于元图建模节点之间在不同语义上下文中的相似度。</p>
+<figure>
+<img src="./graph-embedding/metagraph.png" alt="" /><figcaption>metagraph</figcaption>
+</figure>
+<center>
+图23 Meta-graph示例图
+</center>
+<p>Meta-graph的作者们认为，完整建模节点之间的关系需要同时捕捉多种语义关系，每种语义关系都是两个节点之间的一条meta-path。例如图23（a）中，Alice和Bob是家人关系，因为他们有同一个姓氏（surname）以及住址（address）相同。为了精确建模节点之间复杂的关系，作者们提出基于元图结构（Meta-graph）对图中节点的关系进行建模。从图23（b）中可以看出，元图可以认为是由一条或者多条元路径组成。此外，为了更好地建模节点中的不平衡关系，例如：“导师-学生”、“医生-病患”等，作者们在meta-graph的基础上，根据节点作为头（head）节点或尾（tail）节点，提出了锚定元图（Anchored Metagraph）的概念。如图23（c）所示，虽然两位作者是co-author关系，但是他们的关系却是“导师-学生”的关系。那么对于同一个元图，不同角色的节点作为头结点应该产生不同的锚定元图<span class="math inline">\(A_1\)</span>和<span class="math inline">\(A_2\)</span>。</p>
+<p>与常见的图嵌入算法通过Skip-gram模型或者深度网络经过梯度回传的方法学习节点或者边表示的方式不同，这项工作对于节点的表示是基于统计的方式进行的。给定全图包含的锚定元图的序列<span class="math inline">\(\mathcal{A}=\{A_1, A_2, ..., A_n\}\)</span>，对于节点<span class="math inline">\(v\)</span>可以分别得到它作为头结点和尾结点的向量表示： <span class="math display">\[
+\mathbf{a}_v^h[i] = l^{h}_{v,A_i} \tag{15}
+\]</span></p>
+<p><span class="math display">\[
+\mathbf{a}_v^t[i] = l^t_{v, A_i} \tag{16}
+\]</span></p>
+<p>其中，<span class="math inline">\(\mathbf{a}_v^h\)</span>和<span class="math inline">\(\mathbf{a}_v^t\)</span>分别表示节点<span class="math inline">\(v\)</span>的头结点向量和尾节点向量，向量长度均为<span class="math inline">\(|\mathcal{A}|\)</span>。<span class="math inline">\(l^h_{v,A_i}\)</span>表示以节点<span class="math inline">\(v\)</span>作为头（head）结点的锚定元图<span class="math inline">\(A_i\)</span>出现的次数，$l^t_{v, A_i} <span class="math inline">\(表示节点\)</span>v<span class="math inline">\(作为尾（tail）结点的锚定元图\)</span>A_i<span class="math inline">\(出现的次数。给定节点\)</span>u<span class="math inline">\(和\)</span>v<span class="math inline">\(，可以得到他们的边表示\)</span>_{uv}$： <span class="math display">\[
+\mathbf{a}_{uv}[i]=l^{u,v}_{A_i} \tag{17}
+\]</span> 其中，<span class="math inline">\(l^{u,v}_{A_i}\)</span>表示<span class="math inline">\(u\)</span>作为头结点，<span class="math inline">\(v\)</span>作为尾结点的锚定元图<span class="math inline">\(A_i\)</span>在全图中出现的次数。最终，在计算节点<span class="math inline">\(u\)</span>和<span class="math inline">\(v\)</span>的相似度时，需要训练一个权重<span class="math inline">\(w\)</span>来衡量边向量和节点向量中不同维度所代表的锚定元图的重要性: <span class="math display">\[
+sim(u,v) = \frac{2\mathbf{a}_{uv}^{T}\mathbf{w}}{\mathbf{a}_u^{h T}w + \mathbf{a}_v^{l T}w} \tag{18}
+\]</span> 该工作利用元图的方式来建模用户之间复杂的关系确实非常巧妙，但是不可避免地，在图结构中进行子图挖掘和匹配是十分耗时的过程。在原论文中，作者们也提出了基于元图的对称匹配和二阶段训练等加速方法。因为不是本文关注的重点，故在此不多加介绍。根据KM中ieg同事的描述，该方法被应用在多个异构图推荐问题中。文章的作者在图挖掘方面也多有建树，感兴趣的同学推荐阅读原文和持续follow作者的KM文章和publication。</p>
+<h2 id="动态图dynamic-graph问题">动态图（Dynamic Graph）问题</h2>
+<p>虽然上述各类图嵌入方法的有效性和高效性无论在学术界或是工业界都得到大量的验证。但它们在对图节点进行表示学习时，更多是以单一图或者静态图（Static Graph）的方式进行学习。换而言之，图的结构信息是稳定且不会变化的。当图的结构发生变化时，比如加入了新的边或者新的节点，上述Graph Embedding的方法均需要对新图进行重新训练。但是在现实场景中，图的结构往往是在不断地变化，比如：新用户的加入，新商品的上架，新的好友关系的形成等。这种基于图变化的建模问题可以称为动态图（Dynamic Graph）问题。试想一下，如果微信支付团队每次在新加入用户节点或者用户节点之间的支付关系发生变化时，均需要对图进行重新训练，无论从模型的效果、稳定性或者计算资源的需求上，都是不现实的。根据笔者的调研，现阶段Graph Embedding领域处理动态图节点的方法，大致包括以下三种思路。</p>
+<p>最简单且常见的方法类似于Airbnb embedding对于处理冷启动listing的方式或者LINE处理新节点的方式：在不改变老节点embedding的情况下，利用邻接节点的embedding来表示或学习新节点的embedding。例如：对同一地理位置相似的房源embedding求平均来表示新加入的房源。这一方法因为简单高效，被很多业务团队采用。年初，我们看点内容投放策略团队在对冷启用户embedding进行建模时，也通过对其最近点击的内容embedding求平均的方式来表示冷启用户。但是，此方法无法精确学习新节点的embedding。此外，每当有新节点或者新边加入图结构，部分旧节点的表示也需要做适当的调整，以完整捕捉旧节点在新图的局部结构信息。</p>
+<p>相比之下，微信支付团队发文探讨过关于动态图增量更新的方法[23]更值得参考。他们仅对图中产生变化的局部区域采用随机游走生成新的序列，并利用上一版本的Embedding作为初始化来更新模型。这样的办法可以避免对整个图进行重新计算，且受影响节点都能获得动态更新。但这类方法存在的风险在于，虽然老版本的embedding被用作初始化，但是经过多次局部图更新后，该方法可能面临空间偏移（Space Drifting）的问题。此外，微信支付的同学也提到，当节点变化较大，全图更新还是无法避免，且embedding的稳定性无法得到保障。对该方法感兴趣的同学，推荐阅读推荐支付团队关于图方法相关的KM热文，微信支付团队在图算法上持续输出了多篇好文，现场打call。</p>
+<p>最后，关于动态图问题的思路来自于论文<strong>Dynamic Network Embedding: An Extended Approach for Skip-gram based Network Emebdding</strong>[24]。文章认为，动态图需要解决两个问题：</p>
+<ol type="1">
+<li>动态图不仅需要学习新节点的embedding，也需要更新那些受影响的老节点embedding；</li>
+<li>在学习新节点embedding和更新老节点embedding时，需要避免向量空间偏移的问题。</li>
+</ol>
+<p>为了解决上述两个问题，文章提出了一种动态图嵌入的方法，首先对基于负采样的Skip-gram模型的目标函数进行了分解，使得模型可以分开对每个节点进行单独更新且对利用正则项对节点embedding的版本作了约束： <span class="math display">\[
+L = -log \frac {1} {1+e^{-u_o^T \cdot v_c}} - \mu\sum_{k=1, w_k～P(w)}^K log \frac {1} {1+e^{u_k^T \cdot v_c}} - (1-\mu)\sum_{k=1, w_k～P(w)}^K log \frac {1} {1+e^{u_o^T \cdot v_k}}  \tag{19}
+\]</span> 文中提供了详细的数学推导，说明公式（9）中的第二和三项是对公式（4）的第二项负采样进行了分解，公式（9）是等价于公式（4）的。当需要更新新节点embedding <span class="math inline">\(\mathbf{v}_c\)</span>时，可以把<span class="math inline">\(\mu\)</span>设置成<span class="math inline">\(1\)</span>，并且固定<span class="math inline">\(\mathbf{u}_o\)</span>。当需要对老节点进行更新时，可以把<span class="math inline">\(\mu\)</span>设置成<span class="math inline">\(0\)</span>，并且固定<span class="math inline">\(\mathbf{v}_c\)</span>。</p>
+<p>为了解决空间偏移的问题，文章在公式（9）的基础上加入了约束项，约束更新的embedding版本需与旧版本在同一向量空间中： <span class="math display">\[
+L_{reg}=\|\mathbf{U}^{\tau}-\mathbf{U}^{\tau-1}\|+\|\mathbf{V}^{\tau}-\mathbf{V}^{\tau-1}\| \tag{20}
+\]</span></p>
+<p>笔者认为，第三种思路利用了交替更新的办法保证新节点和受影响的老节点的embedding学习能尽快收敛，且通过公式（20）约束了embedding的版本，缓解了向量空间偏移的问题。但是，交替更新的新节点向量是否能达到节点的最优解是存疑的，且空间偏移问题并不能通过公式（20）进行一个彻底的解决。所以对于动态图或者是工业界常见的增量更新问题，各位读者如果有好的解决思路不妨一起探讨，近期微信支付团队新出的关于增量更新的KM文章也值得阅读[25]。（PS：SAGE等归纳式方法（Inductinve Method）并不在本文的讨论范围内，所以这里就略过不提了）</p>
+<!-- # 结语
+
+本文介绍了今年比较流行的Graph Embedding模型的基本原理和它们在工业界的具体应用，算是看点内容投放策略团队近期在图算法领域的一次初探总结。文章更多希望从各模型的动机和具体的业务需求出发，引发大家对于不同Graph Embedding模型在不同需求和业务场景下如何使用的讨论和思考。希望文章能起到一个科普总结的作用，同时也能作为一个简版的应用实战cookbook，对想在业务场景中应用图嵌入各种模型的同学有一点儿参考的价值。因为看点内容投放策略团队近期也一直在探索图算法在内容投放场景中的应用，欢迎各位对图嵌入算法有深入了解或者感兴趣的同学们多来一起交流。后续也将持续更新图算法系列，分享本团队在真实业务场景中应用图嵌入模型的经验。
+
+这里也顺便为在我们探索调研过程中，联系和交流过的微信支付团队、Tesla的Angel团队打Call。充分表现了我司内部乐于助人，乐于分享的精神，为笔者关于图算法方面提供了很多知识和帮助。 -->
+<h1 id="相关文献">相关文献</h1>
+<p>[1] Mikolov, Tomas, et al. "Efficient estimation of word representations in vector space." <em>arXiv preprint arXiv:1301.3781</em> (2013).</p>
+<p>[2] Rong, Xin. "word2vec parameter learning explained." <em>arXiv preprint arXiv:1411.2738</em> (2014).</p>
+<p>[3] https://www.youtube.com/watch?v=C4X0Cb5_FSo&amp;t=1371s</p>
+<p>[4] Levy, Omer, and Yoav Goldberg. "Neural word embedding as implicit matrix factorization." <em>Advances in neural information processing systems</em> 27 (2014): 2177-2185.</p>
+<p>[5] Barkan, Oren, and Noam Koenigstein. "Item2vec: neural item embedding for collaborative filtering." <em>2016 IEEE 26th International Workshop on Machine Learning for Signal Processing (MLSP)</em>. IEEE, 2016.</p>
+<p>[6] Grbovic, Mihajlo, and Haibin Cheng. "Real-time personalization using embeddings for search ranking at airbnb." <em>Proceedings of the 24th ACM SIGKDD International Conference on Knowledge Discovery &amp; Data Mining</em>. 2018.</p>
+<p>[7] Perozzi, Bryan, Rami Al-Rfou, and Steven Skiena. "Deepwalk: Online learning of social representations." Proceedings of the 20th ACM SIGKDD international conference on Knowledge discovery and data mining. 2014.</p>
+<p>[8] Wang, Jizhe, et al. "Billion-scale commodity embedding for e-commerce recommendation in alibaba." <em>Proceedings of the 24th ACM SIGKDD International Conference on Knowledge Discovery &amp; Data Mining</em>. 2018.</p>
+<p>[9] https://km.woa.com/group/31845/articles/show/362912?kmref=search&amp;from_page=1&amp;no=3</p>
+<p>[10] https://km.woa.com/group/35228/articles/show/342982?kmref=search&amp;from_page=1&amp;no=1</p>
+<p>[11] Grover, Aditya, and Jure Leskovec. "node2vec: Scalable feature learning for networks." <em>Proceedings of the 22nd ACM SIGKDD international conference on Knowledge discovery and data mining</em>. 2016.</p>
+<p>[12] https://zhuanlan.zhihu.com/p/64756917</p>
+<p>[13] https://www.youtube.com/watch?v=YrhBZUtgG4E&amp;t=2964s</p>
+<p>[14] https://mp.weixin.qq.com/s/EV-25t2lWT2JJMLhXsz4zQ</p>
+<p>[15] https://km.woa.com/group/18474/articles/show/378503?kmref=search&amp;from_page=1&amp;no=2</p>
+<p>[16] Tang, Jian, et al. "Line: Large-scale information network embedding." <em>Proceedings of the 24th international conference on world wide web</em>. 2015.</p>
+<p>[17] https://km.woa.com/group/26265/articles/show/458523?kmref=search&amp;from_page=3&amp;no=9</p>
+<p>[18] https://km.woa.com/group/24938/articles/show/475641?kmref=search&amp;from_page=1&amp;no=2</p>
+<p>[19] Dong, Yuxiao, Nitesh V. Chawla, and Ananthram Swami. "metapath2vec: Scalable representation learning for heterogeneous networks." <em>Proceedings of the 23rd ACM SIGKDD international conference on knowledge discovery and data mining</em>. 2017.</p>
+<p>[20] https://km.woa.com/articles/show/502763?kmref=search&amp;from_page=1&amp;no=1</p>
+<p>[21] Fu, Tao-yang, Wang-Chien Lee, and Zhen Lei. "Hin2vec: Explore meta-paths in heterogeneous information networks for representation learning." <em>Proceedings of the 2017 ACM on Conference on Information and Knowledge Management</em>. 2017.</p>
+<p>[22] Fang, Yuan, et al. "Metagraph-based learning on heterogeneous graphs." <em>IEEE Transactions on Knowledge and Data Engineering</em> 33.1 (2019): 154-168.</p>
+<p>[23] https://km.woa.com/group/24938/articles/show/473313</p>
+<p>[24] Du, Lun, et al. "Dynamic Network Embedding: An Extended Approach for Skip-gram based Network Embedding." <em>IJCAI</em>. Vol. 2018. 2018.</p>
+<p>[25] https://km.woa.com/group/24938/articles/show/477481?kmref=dailymail_top&amp;jumpfrom=daily_mail</p>
+<p>[26] https://km.woa.com/group/22680/articles/show/478137?kmref=home_top10_list</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/coding/" rel="tag"># coding</a>
+          
+            <a href="/tags/DL/" rel="tag"># DL</a>
+          
+            <a href="/tags/graph-embedding/" rel="tag"># graph_embedding</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2022/04/07/Star/" rel="next" title="Star">
+                <i class="fa fa-chevron-left"></i> Star
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/lukeandartoo.jpg"
+                alt="" />
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7Carchive">
+              
+                  <span class="site-state-item-count">25</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="rigel_6918@163.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0%E4%B8%8E%E5%9F%BA%E7%A1%80"><span class="nav-number">1.</span> <span class="nav-text">概述与基础</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#word2vec1"><span class="nav-number">1.1.</span> <span class="nav-text">Word2vec[1]</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#skip-gram"><span class="nav-number">1.1.1.</span> <span class="nav-text">Skip-gram</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B4%9F%E9%87%87%E6%A0%B7"><span class="nav-number">1.1.2.</span> <span class="nav-text">负采样</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#word2vec%E4%B8%8E%E7%9F%A9%E9%98%B5%E5%88%86%E8%A7%A3"><span class="nav-number">1.1.3.</span> <span class="nav-text">Word2vec与矩阵分解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%A5%E4%B8%9A%E7%95%8C%E5%BA%94%E7%94%A8item2vec5"><span class="nav-number">1.1.4.</span> <span class="nav-text">工业界应用：Item2vec[5]</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%A5%E4%B8%9A%E7%95%8C%E5%BA%94%E7%94%A8airbnb-embedding6"><span class="nav-number">1.1.5.</span> <span class="nav-text">工业界应用：Airbnb Embedding[6]</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%88%BF%E6%BA%90listingembedding"><span class="nav-number">1.1.5.1.</span> <span class="nav-text">房源（Listing）Embedding</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%B7%E5%90%AF%E5%8A%A8listing"><span class="nav-number">1.1.5.2.</span> <span class="nav-text">冷启动Listing</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%95%BF%E6%9C%9F%E5%85%B4%E8%B6%A3%E5%BB%BA%E6%A8%A1"><span class="nav-number">1.1.5.3.</span> <span class="nav-text">长期兴趣建模</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#graph-embedding"><span class="nav-number">2.</span> <span class="nav-text">Graph Embedding</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#deepwalk7"><span class="nav-number">2.1.</span> <span class="nav-text">DeepWalk[7]</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%A5%E4%B8%9A%E7%95%8C%E5%BA%94%E7%94%A8-eges8"><span class="nav-number">2.1.1.</span> <span class="nav-text">工业界应用: EGES[8]</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#node2vec11"><span class="nav-number">2.2.</span> <span class="nav-text">Node2vec[11]</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%89%E5%81%8F%E9%9A%8F%E6%9C%BA%E6%B8%B8%E8%B5%B0biased-random-walk"><span class="nav-number">2.2.1.</span> <span class="nav-text">有偏随机游走（Biased Random Walk）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%A5%E4%B8%9A%E7%95%8C%E5%BA%94%E7%94%A8%E5%BE%AE%E4%BF%A1%E6%9C%8B%E5%8F%8B%E5%9C%88%E5%B9%BF%E5%91%8A14"><span class="nav-number">2.2.2.</span> <span class="nav-text">工业界应用：微信朋友圈广告[14]</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#line16"><span class="nav-number">2.3.</span> <span class="nav-text">LINE[16]</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E9%98%B6%E4%BA%B2%E5%AF%86%E5%BA%A6%E5%BB%BA%E6%A8%A1"><span class="nav-number">2.3.1.</span> <span class="nav-text">一阶亲密度建模</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E9%98%B6%E4%BA%B2%E5%AF%86%E5%BA%A6%E5%BB%BA%E6%A8%A1"><span class="nav-number">2.3.2.</span> <span class="nav-text">二阶亲密度建模</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B0%E8%8A%82%E7%82%B9%E9%97%AE%E9%A2%98"><span class="nav-number">2.3.3.</span> <span class="nav-text">新节点问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E5%AF%B9%E6%AF%94"><span class="nav-number">2.3.4.</span> <span class="nav-text">实验对比</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#metapath2vec19"><span class="nav-number">2.4.</span> <span class="nav-text">Metapath2vec[19]</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#metapath2vec"><span class="nav-number">2.4.1.</span> <span class="nav-text">metapath2vec</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#metapath2vec-1"><span class="nav-number">2.4.2.</span> <span class="nav-text">metapath2vec++</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hin2vec21"><span class="nav-number">2.5.</span> <span class="nav-text">HIN2Vec[21]</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%A8%E7%A4%BA%E5%AD%A6%E4%B9%A0%E9%98%B6%E6%AE%B5"><span class="nav-number">2.5.1.</span> <span class="nav-text">表示学习阶段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%AD%E7%BB%83%E6%95%B0%E6%8D%AE%E5%87%86%E5%A4%87%E9%98%B6%E6%AE%B5"><span class="nav-number">2.5.2.</span> <span class="nav-text">训练数据准备阶段</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8Emetagraph%E7%9A%84%E5%BC%82%E6%9E%84%E5%9B%BE%E5%BB%BA%E6%A8%A122"><span class="nav-number">2.6.</span> <span class="nav-text">基于Metagraph的异构图建模[22]</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E5%9B%BEdynamic-graph%E9%97%AE%E9%A2%98"><span class="nav-number">2.7.</span> <span class="nav-text">动态图（Dynamic Graph）问题</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E6%96%87%E7%8C%AE"><span class="nav-number">3.</span> <span class="nav-text">相关文献</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">风鸣北川_rigel</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
