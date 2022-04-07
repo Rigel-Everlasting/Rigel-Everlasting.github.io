@@ -819,29 +819,16 @@ argmax_{\theta} \sum_{(l, c)\in D_p} log \frac {1}{1+e^{-\mathbf{v}^{&#39;}_l\ma
 
       
         
-          
-            <h1 id="server-connection">Server Connection</h1>
+          <h1 id="server-connection">Server Connection</h1>
 <h2 id="generate-private-public-key-pairs">Generate private-public key pairs:</h2>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -b 4096 -f ~&#x2F;.ssh&#x2F;new_rsa -C &quot;triton key for jamie&quot;</span><br></pre></td></tr></table></figure>
-<h2 id="copy-public-key-to-server">Copy public key to server</h2>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-copy-id -i ~&#x2F;.ssh&#x2F;new_rsa.pub name@server.addr</span><br></pre></td></tr></table></figure>
-<h2 id="login-with-ssh-key-avoid-typing-pwd-every-time">Login with SSH key (avoid typing pwd every time)</h2>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-add ~&#x2F;.ssh&#x2F;new_rsa</span><br></pre></td></tr></table></figure>
-<h2 id="modify-config-file-for-more-convenient-jumping">Modify config file for more convenient jumping</h2>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim ~&#x2F;.ssh&#x2F;config</span><br></pre></td></tr></table></figure>
-<p>add the followings:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># cluster name</span><br><span class="line">Host xxx</span><br><span class="line">    User LOGIN_NAME</span><br><span class="line">    Hostname server.addr</span><br></pre></td></tr></table></figure>
-<h1 id="environment">Environment</h1>
-<h2 id="install-conda">Install conda</h2>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget https:&#x2F;&#x2F;repo.anaconda.com&#x2F;archive&#x2F;Anaconda3-2021.05-Linux-x86_64.sh</span><br><span class="line">bash Anaconda3-2021.05-Linux-x86_64.sh</span><br></pre></td></tr></table></figure>
-<h2 id="modify-bash">Modify bash</h2>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim ~&#x2F;.bashrc</span><br></pre></td></tr></table></figure>
-<p>Add the followings:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export PATH&#x3D;$PATH:anaconda_install_path</span><br></pre></td></tr></table></figure>
-<p>run:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">source ~&#x2F;.bashrc</span><br></pre></td></tr></table></figure>
-
-          
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2021/11/05/server-config/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1142,22 +1129,20 @@ argmax_{\theta} \sum_{(l, c)\in D_p} log \frac {1}{1+e^{-\mathbf{v}^{&#39;}_l\ma
 
       
         
-          
-            <p align="right">
+          <p align="right">
 <font color="grey"> <i>——2021.2.4</i> </font>
 </p>
 <hr>
 <h2 id="useful-outer-materials">useful outer materials:</h2>
 <p><a target="_blank" rel="noopener" href="https://xubin.blog.csdn.net/article/details/50826892">ref1</a></p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/xbinworld/article/details/50818803">ref2</a></p>
-<h2 id="what-it-can-do">What it can do:</h2>
-<p>Dimension reduction</p>
-<p>Clustering</p>
-<p>Neighbourhood preserving maps</p>
-<h2 id="why-soms-is-not-for-classification">Why SOMs is not for classification:</h2>
-<p>It just generates the NEIGHBOURHOOD instead of class. If you want to use SOMs as classifier you need to add another classification layer.</p>
-
-          
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2021/02/04/SOM-learning/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1307,16 +1292,18 @@ argmax_{\theta} \sum_{(l, c)\in D_p} log \frac {1}{1+e^{-\mathbf{v}^{&#39;}_l\ma
 
       
         
-          
-            <p align="right">
+          <p align="right">
 <font color="grey"> <i>——since 2020.10.27</i> </font>
 </p>
 <hr>
 <h2 id="一些常用的命令">一些常用的命令</h2>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">activate  # 切换到base环境 # 可能有点问题？</span><br><span class="line"></span><br><span class="line">conda deactivate  # 切换到base环境</span><br><span class="line">source deactivate # 切换到base环境</span><br><span class="line"></span><br><span class="line">activate xxx # 切换到自定义环境， xxx为环境名字</span><br><span class="line"></span><br><span class="line">conda create -n xxx python&#x3D;3 &#x2F;&#x2F; 创建一个名为xxx的环境并指定python版本为3(的最新版本)</span><br><span class="line"></span><br><span class="line">conda env list &#x2F;&#x2F; 列出conda管理的所有环境</span><br><span class="line"></span><br><span class="line">conda list &#x2F;&#x2F; 列出当前环境的所有包</span><br><span class="line"></span><br><span class="line">conda install requests 安装requests包</span><br><span class="line"></span><br><span class="line">conda remove requests 卸载requets包</span><br><span class="line"></span><br><span class="line">conda remove -n learn --all &#x2F;&#x2F; 删除learn环境及下属所有包</span><br><span class="line"></span><br><span class="line">conda update requests 更新requests包</span><br><span class="line"></span><br><span class="line">conda env export &gt; environment.yaml &#x2F;&#x2F; 导出当前环境的包信息</span><br><span class="line"></span><br><span class="line">conda env create -f environment.yaml &#x2F;&#x2F; 用配置文件创建新的虚拟环境</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/eaee1fadc1e9">reference</a></p>
-
-          
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2020/10/27/anacoda-tutorial/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1629,8 +1616,7 @@ argmax_{\theta} \sum_{(l, c)\in D_p} log \frac {1}{1+e^{-\mathbf{v}^{&#39;}_l\ma
 
       
         
-          
-            <p align="right">
+          <p align="right">
 <font color="grey"> <i>——写于 2020.4</i> </font>
 </p>
 <hr>
@@ -1639,14 +1625,13 @@ argmax_{\theta} \sum_{(l, c)\in D_p} log \frac {1}{1+e^{-\mathbf{v}^{&#39;}_l\ma
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim &#x2F;etc&#x2F;hosts</span><br></pre></td></tr></table></figure>
 <p>输入s进入插入模式</p>
 <p>加入下面的ip和域名的映射</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">151.101.185.194 github.global.ssl.fastly.net</span><br><span class="line">192.30.253.112 github.com</span><br><span class="line">151.101.184.133 assets-cdn.github.com</span><br><span class="line">151.101.184.133 avatars0.githubusercontent.com</span><br><span class="line">151.101.112.133 avatars1.githubusercontent.com</span><br></pre></td></tr></table></figure>
-<p>按esc输入:wq!退出并保存</p>
-<p>查看一下是否修改成功</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo cat &#x2F;etc&#x2F;hosts</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>再ping就可以ping通了。</p>
-<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/dd996cdcc3f7">reference1</a> <a target="_blank" rel="noopener" href="https://blog.csdn.net/K_Y_Lee/article/details/101353857">reference2</a></p>
-
-          
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2020/06/12/macbrew%E7%9B%B8%E5%85%B3%E9%97%AE%E9%A2%98/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1785,19 +1770,20 @@ argmax_{\theta} \sum_{(l, c)\in D_p} log \frac {1}{1+e^{-\mathbf{v}^{&#39;}_l\ma
 
       
         
-          
-            <p align="right">
+          <p align="right">
 <font color="grey"> <i>——写于 2020.6.8</i> </font>
 </p>
 <hr>
 <h2 id="并查集union-find">并查集（Union-Find）</h2>
 <p>一种数据结构，可用于计算连通分量的数目。</p>
 <h3 id="基本思想">基本思想</h3>
-<p>总结起来说就是计算两个节点之间是否存在连通分量，只考虑<b>连 通与否</b>，不考虑距离的长度。每个集合中由一个根结点代表整个集合，即若两个节点之间是连通的，那么它们毕竟含有共同的根结点。</p>
-<p>并查集的实现核心包括两个函数，find过程和union过程。find过程用于查找当前节点的根结点是谁，union过程用于合并连通的节点。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">findCircleNum</span>(<span class="params">self, M: <span class="type">List</span>[<span class="type">List</span>[<span class="built_in">int</span>]]</span>) -&gt; <span class="built_in">int</span>:</span></span><br><span class="line">        row = <span class="built_in">len</span>(M)</span><br><span class="line">        col = <span class="built_in">len</span>(M[<span class="number">0</span>])</span><br><span class="line"></span><br><span class="line">        pre = [i <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(row)]</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">def</span> <span class="title">find</span>(<span class="params">x</span>):</span></span><br><span class="line">            s = x</span><br><span class="line">            <span class="keyword">while</span> x != pre[x]:</span><br><span class="line">                x = pre[x]</span><br><span class="line">            <span class="keyword">while</span> s != x:</span><br><span class="line">                tmp = pre[s]</span><br><span class="line">                pre[s] = x</span><br><span class="line">                s = tmp</span><br><span class="line">            <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">def</span> <span class="title">union</span>(<span class="params">a, b</span>):</span></span><br><span class="line">            r1 = find(a)</span><br><span class="line">            r2 = find(b)</span><br><span class="line">            <span class="keyword">if</span> r1 != r2:</span><br><span class="line">                pre[r2] = r1</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(row):</span><br><span class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(col):</span><br><span class="line">                <span class="keyword">if</span> M[i][j] == <span class="number">1</span>:</span><br><span class="line">                    union(i, j)</span><br><span class="line">        s = <span class="built_in">list</span>(<span class="built_in">set</span>(pre))</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">len</span>(s)      </span><br></pre></td></tr></table></figure>
-
-          
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2020/06/08/%E5%B9%B6%E6%9F%A5%E9%9B%86/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1946,6 +1932,7 @@ argmax_{\theta} \sum_{(l, c)\in D_p} log \frac {1}{1+e^{-\mathbf{v}^{&#39;}_l\ma
 <p><br></p>
 <p><i>score: 5/5</i></p>
 <p>这是一本主题为种族歧视的书，比较有特点的是，叙述者是主角阿蒂克斯的女儿斯库特。它以一个孩子为第一人称讲述了在南北战争后数年，种族歧视依然根深蒂固的美国南部，一个白人律师阿蒂克斯为一位被诬陷的黑人辩诉的故事。</p>
+<p>我认为作者所塑造的白人律师阿蒂克斯，是最为接近现实生活中英雄的角色。他不是态度强硬热情洋溢的反种族歧视斗士，他只是在一个可悲的大环境下选择拼尽全力披露真相的普通人。有趣的是，孩子们尚且懂得生命的平等，尚且能够为人类带给人类的苦难而哭泣，有些人却在成长的过程中丢掉了为他人着想的能力，只剩下一副冷漠傲慢的外表，和一个充满偏见的灵魂。</p>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2020/06/03/%E4%B9%A6%E5%8D%95-20200603/#more" rel="contents">
